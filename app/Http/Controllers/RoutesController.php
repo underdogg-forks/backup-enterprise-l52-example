@@ -57,7 +57,7 @@ class RoutesController extends Controller
             ->pushCriteria(new RoutesByPathAscending())
             ->pushCriteria(new RoutesByMethodAscending())
             ->paginate(20);
-        $perms = $this->permission->all()->lists('display_name', 'id');
+        $perms = $this->permission->all()->pluck('display_name', 'id');
         // SR [2016-03-20] Cannot add/prepend a blank item as it reshuffles the array index.
         // This cause the permission to not be recognized by the code building the view and
         // matching permission with each route. From now on un-setting the permission of a

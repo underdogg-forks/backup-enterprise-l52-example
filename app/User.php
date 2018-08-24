@@ -219,9 +219,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * or clear it if not. Also force membership to group 'users'.
      *
      * @param array $attributes
+     * //array $attributes = Array, array $options = Array
      * @return void
      */
-    public function update(array $attributes = [])
+    public function update(array $attributes = [], array $options = [])
     {
 
         if (array_key_exists('first_name', $attributes)) {

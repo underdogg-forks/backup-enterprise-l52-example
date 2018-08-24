@@ -38,7 +38,7 @@
   ],
   "require": {
     "php": ">=5.5.9",
-    "laravel/framework": "5.1.*",
+    "laravel/framework": "5.2.*",
     "doctrine/dbal": "^2.6@dev",
     "laravelcollective/html": "~5.0",
     "yaap/theme": "2.*",
@@ -62,11 +62,14 @@
     "rtconner/laravel-tagging": "~2.2"
   },
   "require-dev": {
+    "filp/whoops": "^2.2",
     "fzaninotto/faker": "~1.4",
+    "jeroen-g/laravel-packager": "dev-master",
     "mockery/mockery": "0.9.*",
-    "phpunit/phpunit": "~4.0",
     "phpspec/phpspec": "~2.1",
-    "jeroen-g/laravel-packager": "dev-master"
+    "phpunit/phpunit": "~4.0",
+    "symfony/css-selector": "~3.0",
+    "symfony/dom-crawler": "~3.0"
   },
   "autoload": {
     "classmap": [

@@ -44,20 +44,20 @@ class MenusController extends Controller
         $menusJson = $this->menusOrmToJsTreeJson($menus);
 
         // List label and id of all menus ordered by Label (asc).
-        $parents = Menu::where('separator', '0')->orderBy('label', 'ASC')->orderBy('id', 'ASC')->get()->lists('label',
+        $parents = Menu::where('separator', '0')->orderBy('label', 'ASC')->orderBy('id', 'ASC')->get()->pluck('label',
             'id');
         // Convert to array.
         $parents = $parents->toArray();
 
         // List name and id of all routes ordered by Name (asc).
-        $routes = Route::whereNotNull('name')->orderBy('name', 'ASC')->get()->lists('name', 'id');
+        $routes = Route::whereNotNull('name')->orderBy('name', 'ASC')->get()->pluck('name', 'id');
         // Convert to array.
         $routes = $routes->toArray();
         // Add a blank option at the top.
         $routes = array('blank' => '') + $routes;
 
         // List display name and id of all permissions ordered by Name (asc).
-        $permissions = Permission::orderBy('name', 'ASC')->get()->lists('display_name', 'id');
+        $permissions = Permission::orderBy('name', 'ASC')->get()->pluck('display_name', 'id');
         // Convert to array.
         $permissions = $permissions->toArray();
         // Add a blank option at the top.

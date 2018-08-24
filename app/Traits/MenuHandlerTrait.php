@@ -306,7 +306,7 @@ trait MenuHandlerTrait
             $trailContent = $this->replaceVars($this->TRAIL_HEADER, $variables) . $trailContent;
         } catch (\Exception $ex) {
             $trailContent = "<!-- Failed to render breadcrumb trail -->";
-            Log::error('Failed to render breadcrumb trail.', ['Exception' => $ex]);
+            //Log::error('Failed to render breadcrumb trail.', ['Exception' => $ex]);
         }
 
         return view($this->TRAIL_PARTIAL_VIEW, compact('trailContent'));

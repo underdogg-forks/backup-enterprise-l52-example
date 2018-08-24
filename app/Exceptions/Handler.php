@@ -19,9 +19,20 @@ class Handler extends ExceptionHandler
      *
      * @var array
      */
+    /*
+    protected $dontReport = [
+    ];
+    */
+
     protected $dontReport = [
         \Symfony\Component\HttpKernel\Exception\HttpException::class,
+        AuthorizationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        ValidationException::class,
     ];
+
+
 
     /**
      * Report or log an exception.
@@ -121,6 +132,31 @@ class Handler extends ExceptionHandler
             return $msg;
         });
     }
+
+
+    protected function convertExceptionToResponse(Exception $e)
+    {
+        if (config('app.debug')) {
+            $whoops = new \Whoops\Run;
+            if(request()->wantsJson())
+            {
+                $whoops->pushHandler(new \Whoops\Handler\JsonResponseHandler());
+            }
+            else
+            {
+                $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            }
+
+            return response()->make(
+                $whoops->handleException($e),
+                method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500,
+                method_exists($e, 'getHeaders') ? $e->getHeaders() : []
+            );
+        }
+
+        return parent::convertExceptionToResponse($e);
+    }
+
 
     /**
      * Render an exception into an HTTP response.
