@@ -15,10 +15,9 @@ use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Mail;
 use Setting;
-use Sroutier\EloquentLDAP\Contracts\EloquentLDAPUserInterface;
 use Zizaco\Entrust\Traits\EntrustUserTrait as EntrustUserTrait;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract, EloquentLDAPUserInterface
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
     use Authenticatable {
         Authenticatable::getRememberToken as authenticatableGetRememberToken;
