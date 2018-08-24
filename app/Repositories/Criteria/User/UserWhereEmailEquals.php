@@ -1,9 +1,10 @@
 <?php namespace App\Repositories\Criteria\User;
 
-use Bosnadev\Repositories\Criteria\Criteria;
 use Bosnadev\Repositories\Contracts\RepositoryInterface as Repository;
+use Bosnadev\Repositories\Criteria\Criteria;
 
-class UserWhereEmailEquals extends Criteria {
+class UserWhereEmailEquals extends Criteria
+{
 
     private $str;
 
@@ -19,7 +20,7 @@ class UserWhereEmailEquals extends Criteria {
      *
      * @return mixed
      */
-    public function apply( $model, Repository $repository )
+    public function apply($model, Repository $repository)
     {
         $model = $model->where('email', '=', $this->str);
         return $model;

@@ -1,7 +1,8 @@
 <!-- Custom Tabs -->
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_details" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
+        <li class="active"><a href="#tab_details" data-toggle="tab"
+                              aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_details">

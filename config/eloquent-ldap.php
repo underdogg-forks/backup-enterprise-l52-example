@@ -156,7 +156,7 @@ return [
     |
     */
 
-    'server' => [ env('eloquent-ldap.server', "ldapsrv01.company.com") ],
+    'server' => [env('eloquent-ldap.server', "ldapsrv01.company.com")],
 
     /*
     |--------------------------------------------------------------------------

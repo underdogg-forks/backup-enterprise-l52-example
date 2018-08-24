@@ -1,4 +1,3 @@
-
 <!-- Exception loading help view: {{ $exMessage }} -->
 <li class="dropdown messages-menu">
     <!-- Menu toggle button -->

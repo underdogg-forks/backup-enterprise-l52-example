@@ -9,7 +9,8 @@ use Auth;
 use Illuminate\Contracts\Foundation\Application;
 use Setting;
 
-class ErrorsController extends Controller {
+class ErrorsController extends Controller
+{
 
     /**
      * @var Error
@@ -33,7 +34,8 @@ class ErrorsController extends Controller {
      */
     public function index()
     {
-        Audit::log(Auth::user()->id, trans('admin/error/general.audit-log.category'), trans('admin/error/general.audit-log.msg-index'));
+        Audit::log(Auth::user()->id, trans('admin/error/general.audit-log.category'),
+            trans('admin/error/general.audit-log.msg-index'));
 
         $page_title = trans('admin/error/general.page.index.title');
         $page_description = trans('admin/error/general.page.index.description');
@@ -46,13 +48,14 @@ class ErrorsController extends Controller {
 
     public function purge()
     {
-        Audit::log(Auth::user()->id, trans('admin/error/general.audit-log.category'), trans('admin/error/general.audit-log.msg-purge'));
+        Audit::log(Auth::user()->id, trans('admin/error/general.audit-log.category'),
+            trans('admin/error/general.audit-log.msg-purge'));
 
         $purge_retention = Setting::get('errors.purge_retention');
         $purge_date = (new \DateTime())->modify("- $purge_retention day");
         $errorsToDelete = $this->error->pushCriteria(new ErrorCreatedBefore($purge_date))->all();
 
-        foreach( $errorsToDelete as $error) {
+        foreach ($errorsToDelete as $error) {
             // The AuditRepository located at $this->error is changed to a instance of the
             // QueryBuilder when we run a query as done above. So we had to revert to some
             // Magic to get a handle of the model...
@@ -67,7 +70,8 @@ class ErrorsController extends Controller {
     {
         $error = $this->error->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/error/general.audit-log.category'), trans('admin/error/general.audit-log.msg-show'));
+        Audit::log(Auth::user()->id, trans('admin/error/general.audit-log.category'),
+            trans('admin/error/general.audit-log.msg-show'));
 
         $errorData = urldecode(http_build_query($error->data, '', PHP_EOL));
 

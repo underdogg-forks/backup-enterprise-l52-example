@@ -46,11 +46,11 @@
             dataType: 'JSON',
             success: function (data) {
 //                console.log(data);
-                routeMethod  = data['method'];
-                routePath    = data['path'];
+                routeMethod = data['method'];
+                routePath = data['path'];
                 routeEnabled = data['enabled'];
 
-                if(1 == routeEnabled) {
+                if (1 == routeEnabled) {
                     routeStatus = '<i class="fa fa-check text-green"></i>';
                 }
                 else {
@@ -58,14 +58,14 @@
                 }
 
                 // Build table cells.
-                idCell     = '<td class="hidden" rowname="id">' + routeID + '</td>';
-                methodCel    = '<td>' + '<a href="' + urlShowRoute + '">' + routeMethod + '</a>' + '</td>';
-                pathCel    = '<td>' + '<a href="' + urlShowRoute + '">' + routePath + '</a>' + '</td>';
+                idCell = '<td class="hidden" rowname="id">' + routeID + '</td>';
+                methodCel = '<td>' + '<a href="' + urlShowRoute + '">' + routeMethod + '</a>' + '</td>';
+                pathCel = '<td>' + '<a href="' + urlShowRoute + '">' + routePath + '</a>' + '</td>';
                 enabledCel = '<td>' + routeStatus + '</td>';
-                actionCel  = '<td style="text-align: right"><a class="btn-remove-route" href="#" title="{{ trans('general.button.remove-route') }}"><i class="fa fa-trash-o deletable"></i></a></td>';
+                actionCel = '<td style="text-align: right"><a class="btn-remove-route" href="#" title="{{ trans('general.button.remove-route') }}"><i class="fa fa-trash-o deletable"></i></a></td>';
 
                 // Add selected item only if not already in list.
-                if ( $('#tbl-routes tr > td[rowname="id"]:contains(' + routeID + ')').length == 0 ) {
+                if ($('#tbl-routes tr > td[rowname="id"]:contains(' + routeID + ')').length == 0) {
                     $('#tbl-routes > tbody:last-child').append('<tr>' + idCell + methodCel + pathCel + enabledCel + actionCel + '</tr>');
                 }
 
@@ -74,7 +74,7 @@
 
     });
 
-    $('body').on('click', 'a.btn-remove-route', function() {
+    $('body').on('click', 'a.btn-remove-route', function () {
         $(this).parent().parent().remove();
     });
 </script>

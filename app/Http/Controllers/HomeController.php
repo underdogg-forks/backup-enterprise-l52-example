@@ -30,8 +30,8 @@ class HomeController extends Controller
         try {
             $homeCandidateName = Setting::get('app.home_route');
             $homeRouteName = $homeCandidateName;
-        }
-        catch (Exception $ex) { } // Eat the exception will default to the welcome route.
+        } catch (Exception $ex) {
+        } // Eat the exception will default to the welcome route.
 
         $request->session()->reflash();
         return Redirect::route($homeRouteName);

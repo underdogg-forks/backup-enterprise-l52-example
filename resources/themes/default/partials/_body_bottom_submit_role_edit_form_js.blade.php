@@ -1,9 +1,8 @@
-
 <script type="text/javascript">
     $("#btn-submit-edit").on("click", function () {
-        var users=[], id;
+        var users = [], id;
         // Collect all IDs from first column.
-        $('#tbl-users tr').each(function() {
+        $('#tbl-users tr').each(function () {
             id = $(this).find("td:first").html();
             if (id) {
                 users.push(id);

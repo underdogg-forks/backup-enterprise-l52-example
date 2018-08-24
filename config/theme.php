@@ -10,7 +10,7 @@ return array(
     | The directory with your themes.
     |
     */
-    'path'         => base_path('resources/themes'),
+    'path' => base_path('resources/themes'),
 
     /*
     |--------------------------------------------------------------------------
@@ -20,7 +20,7 @@ return array(
     | The directory with assets.
     |
     */
-    'assets_path'  => 'assets/themes',
+    'assets_path' => 'assets/themes',
 
     /*
     |--------------------------------------------------------------------------
@@ -32,9 +32,9 @@ return array(
     |
     */
     'containerDir' => array(
-        'layout'  => 'layouts',
+        'layout' => 'layouts',
         'partial' => 'partials',
-        'view'    => 'views',
+        'view' => 'views',
     ),
 
     /**

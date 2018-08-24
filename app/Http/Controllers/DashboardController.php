@@ -1,8 +1,8 @@
 <?php namespace App\Http\Controllers;
 
 
-use Illuminate\Contracts\Foundation\Application;
 use App\Repositories\AuditRepository as Audit;
+use Illuminate\Contracts\Foundation\Application;
 
 class DashboardController extends Controller
 {
@@ -18,7 +18,8 @@ class DashboardController extends Controller
     }
 
 
-    public function index() {
+    public function index()
+    {
         $data['tasks'] = [
             [
                 'name' => 'Design New Dashboard',

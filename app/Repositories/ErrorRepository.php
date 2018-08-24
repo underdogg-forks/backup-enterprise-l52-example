@@ -2,7 +2,8 @@
 
 use Bosnadev\Repositories\Eloquent\Repository;
 
-class ErrorRepository extends Repository {
+class ErrorRepository extends Repository
+{
 
     public function model()
     {

@@ -15,7 +15,7 @@ trait UserHasPermissionsTrait
     {
         parent::boot();
 
-        static::deleting(function($user) {
+        static::deleting(function ($user) {
             if (!method_exists(Config::get('auth.model'), 'bootSoftDeletingTrait')) {
                 // Repeat role->sync code attached from EntrustUserTrait::boot() as this boot()
                 // function overwrites it.
@@ -27,72 +27,6 @@ trait UserHasPermissionsTrait
         });
     }
 
-    /**
-     * Many-to-Many relations with Permission.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function permissions()
-    {
-        return $this->belongsToMany(Config::get('entrust.permission'), Config::get('entrust.permission_user_table'));
-    }
-
-    /**
-     * Checks if the user has a permission by its name.
-     *
-     * @param string|array $name       Permission name or array of permission names.
-     * @param bool         $requireAll All roles in the array are required.
-     *
-     * @return bool
-     */
-    public function hasPermission($name, $requireAll = false)
-    {
-        if (is_array($name)) {
-            foreach ($name as $permName) {
-                $hasPerm = $this->hasPermission($permName);
-
-                if ($hasPerm && !$requireAll) {
-                    return true;
-                } elseif (!$hasPerm && $requireAll) {
-                    return false;
-                }
-            }
-
-            // If we've made it this far and $requireAll is FALSE, then NONE of the permissions were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the permissions were found.
-            // Return the value of $requireAll;
-            return $requireAll;
-        } else {
-            // The 'root' user is all powerful.
-            // TODO: Get super user name from config, and replace all occurrences.
-            if ('root' == $this->username) {
-                return true;
-            }
-            // Everyone has 'open-to-all'.
-            // TODO: Get 'open-to-all' role name from config, and replace all occurrences.
-            elseif ( 'open-to-all' == $name ) {
-                return true;
-            }
-            // At this stage all users are authenticated so yes...
-            elseif ( 'basic-authenticated' == $name ) {
-                return true;
-            }
-
-
-
-            else {
-                foreach ($this->permissions as $perm) {
-                    if ($perm->name == $name) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    // TODO: Rewrite these with $user->permissions in mind!!
     /**
      * Code copy of EntrustUserTrait::can(...) with the one addition to check if a role
      * is enabled first the check if a permission is also enabled before
@@ -124,13 +58,12 @@ trait UserHasPermissionsTrait
             // TODO: Get 'admins' role name from config, and replace all occurrences.
             if ($this->hasRole('admins')) {
                 return true;
-            }
-            else {
+            } else {
                 foreach ($this->roles as $role) {
                     if ($role->enabled) {
                         // Validate against the Permission table
                         foreach ($role->perms as $perm) {
-                            if ( ($perm->enabled) && ($perm->name == $permission) ) {
+                            if (($perm->enabled) && ($perm->name == $permission)) {
                                 return true;
                             }
                         }
@@ -181,6 +114,70 @@ trait UserHasPermissionsTrait
         }
 
         return false;
+    }
+
+    // TODO: Rewrite these with $user->permissions in mind!!
+
+    /**
+     * Checks if the user has a permission by its name.
+     *
+     * @param string|array $name Permission name or array of permission names.
+     * @param bool $requireAll All roles in the array are required.
+     *
+     * @return bool
+     */
+    public function hasPermission($name, $requireAll = false)
+    {
+        if (is_array($name)) {
+            foreach ($name as $permName) {
+                $hasPerm = $this->hasPermission($permName);
+
+                if ($hasPerm && !$requireAll) {
+                    return true;
+                } elseif (!$hasPerm && $requireAll) {
+                    return false;
+                }
+            }
+
+            // If we've made it this far and $requireAll is FALSE, then NONE of the permissions were found
+            // If we've made it this far and $requireAll is TRUE, then ALL of the permissions were found.
+            // Return the value of $requireAll;
+            return $requireAll;
+        } else {
+            // The 'root' user is all powerful.
+            // TODO: Get super user name from config, and replace all occurrences.
+            if ('root' == $this->username) {
+                return true;
+            }
+            // Everyone has 'open-to-all'.
+            // TODO: Get 'open-to-all' role name from config, and replace all occurrences.
+            elseif ('open-to-all' == $name) {
+                return true;
+            } // At this stage all users are authenticated so yes...
+            elseif ('basic-authenticated' == $name) {
+                return true;
+            } else {
+                foreach ($this->permissions as $perm) {
+                    if ($perm->name == $name) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Attach multiple permissions to a user
+     *
+     * @param mixed $permissions
+     */
+    public function attachPermissions($permissions)
+    {
+        foreach ($permissions as $permission) {
+            $this->attachPermission($permission);
+        }
     }
 
     // TODO: Rewrite with $user->permissions in mind!!
@@ -261,15 +258,37 @@ trait UserHasPermissionsTrait
      */
     public function attachPermission($permission)
     {
-        if(is_object($permission)) {
+        if (is_object($permission)) {
             $permission = $permission->getKey();
         }
 
-        if(is_array($permission)) {
+        if (is_array($permission)) {
             $permission = $permission['id'];
         }
 
         $this->permissions()->attach($permission);
+    }
+
+    /**
+     * Many-to-Many relations with Permission.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function permissions()
+    {
+        return $this->belongsToMany(Config::get('entrust.permission'), Config::get('entrust.permission_user_table'));
+    }
+
+    /**
+     * Detach multiple permissions from a user
+     *
+     * @param mixed $permissions
+     */
+    public function detachPermissions($permissions)
+    {
+        foreach ($permissions as $permission) {
+            $this->detachPermission($permission);
+        }
     }
 
     /**
@@ -288,30 +307,6 @@ trait UserHasPermissionsTrait
         }
 
         $this->permissions()->detach($permission);
-    }
-
-    /**
-     * Attach multiple permissions to a user
-     *
-     * @param mixed $permissions
-     */
-    public function attachPermissions($permissions)
-    {
-        foreach ($permissions as $permission) {
-            $this->attachPermission($permission);
-        }
-    }
-
-    /**
-     * Detach multiple permissions from a user
-     *
-     * @param mixed $permissions
-     */
-    public function detachPermissions($permissions)
-    {
-        foreach ($permissions as $permission) {
-            $this->detachPermission($permission);
-        }
     }
 
 }

@@ -2,7 +2,6 @@
 
 use App\Exceptions\FileNotFoundException;
 use App\Libraries\FlashLevel;
-use App\Libraries\SettingDotEnv;
 use App\Libraries\Utils;
 use App\Repositories\AuditRepository as Audit;
 use Auth;
@@ -24,7 +23,8 @@ class SettingsController extends Controller
 
     public function index()
     {
-        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.audit-log.msg-index'));
+        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'),
+            trans('admin/settings/general.audit-log.msg-index'));
 
         $page_title = trans('admin/settings/general.page.index.title'); // "Admin | Settings";
         $page_description = trans('admin/settings/general.page.index.description'); // "List of Settings";
@@ -44,10 +44,11 @@ class SettingsController extends Controller
         $value = Setting::get($key);
 
         if (is_bool($value)) {
-            $value = ($value)? "true":"false";
+            $value = ($value) ? "true" : "false";
         }
 
-        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.audit-log.msg-show', ['key' => $key]));
+        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'),
+            trans('admin/settings/general.audit-log.msg-show', ['key' => $key]));
 
         $page_title = trans('admin/settings/general.page.show.title');
         $page_description = trans('admin/settings/general.page.show.description', ['key' => $key]);
@@ -70,17 +71,20 @@ class SettingsController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, array('key'       => 'required',
-                                        'value'     => 'required',
-                                        'encrypted' => 'required'));
+        $this->validate($request, array(
+            'key' => 'required',
+            'value' => 'required',
+            'encrypted' => 'required'
+        ));
 
         $attributes = $request->all();
 
-        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.audit-log.msg-store', ['key' => $attributes['key']]));
+        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'),
+            trans('admin/settings/general.audit-log.msg-store', ['key' => $attributes['key']]));
 
         Setting::set($attributes['key'], $attributes['value'], $attributes['encrypted']);
 
-        Flash::success( trans('admin/settings/general.status.created') );
+        Flash::success(trans('admin/settings/general.status.created'));
 
         return redirect('/admin/settings');
     }
@@ -91,23 +95,26 @@ class SettingsController extends Controller
         $value = Setting::get($key);
 
         if (is_bool($value)) {
-            $value = ($value)? "true":"false";
+            $value = ($value) ? "true" : "false";
         }
 
         $page_title = trans('admin/settings/general.page.edit.title');
         $page_description = trans('admin/settings/general.page.edit.description', ['key' => $key]);
 
-        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.audit-log.msg-edit', ['key' => $key]));
+        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'),
+            trans('admin/settings/general.audit-log.msg-edit', ['key' => $key]));
 
         return view('admin.settings.edit', compact('key', 'value', 'page_title', 'page_description'));
     }
 
     public function update(Request $request)
     {
-        $this->validate($request, [ 'orgKey'    => 'required',
-                                    'key'       => 'required',
-                                    'value'     => 'required',
-                                    'encrypted' => 'required']);
+        $this->validate($request, [
+            'orgKey' => 'required',
+            'key' => 'required',
+            'value' => 'required',
+            'encrypted' => 'required'
+        ]);
 
         $attributes = $request->all();
         $orgKey = $attributes['orgKey'];
@@ -115,14 +122,15 @@ class SettingsController extends Controller
         $value = $attributes['value'];
         $encrypted = $attributes['encrypted'];
 
-        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.audit-log.msg-update', ['key' => $key]));
+        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'),
+            trans('admin/settings/general.audit-log.msg-update', ['key' => $key]));
 
         Setting::set($key, $value, $encrypted);
         if ($orgKey != $key) {
             Setting::forget($orgKey);
         }
 
-        Flash::success( trans('admin/settings/general.status.updated') );
+        Flash::success(trans('admin/settings/general.status.updated'));
 
         return redirect('/admin/settings');
     }
@@ -131,9 +139,10 @@ class SettingsController extends Controller
     {
         Setting::forget($key);
 
-        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.audit-log.msg-destroy', ['key' => $key]));
+        Audit::log(Auth::user()->id, trans('admin/settings/general.audit-log.category'),
+            trans('admin/settings/general.audit-log.msg-destroy', ['key' => $key]));
 
-        Flash::success( trans('admin/settings/general.status.deleted') );
+        Flash::success(trans('admin/settings/general.status.deleted'));
 
         return redirect('/admin/settings');
     }
@@ -158,12 +167,17 @@ class SettingsController extends Controller
         try {
             $cnt = Setting::load($envName);
             if (0 == $cnt) {
-                Utils::flashAndAudit(trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.status.no-settings-loaded', ['env' => $envName]), FlashLevel::WARNING);
+                Utils::flashAndAudit(trans('admin/settings/general.audit-log.category'),
+                    trans('admin/settings/general.status.no-settings-loaded', ['env' => $envName]),
+                    FlashLevel::WARNING);
             } else {
-                Utils::flashAndAudit(trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.status.settings-loaded', ['number' => $cnt, 'env' => $envName]), FlashLevel::SUCCESS);
+                Utils::flashAndAudit(trans('admin/settings/general.audit-log.category'),
+                    trans('admin/settings/general.status.settings-loaded', ['number' => $cnt, 'env' => $envName]),
+                    FlashLevel::SUCCESS);
             }
         } catch (FileNotFoundException $fnfx) {
-            Utils::flashAndAudit(trans('admin/settings/general.audit-log.category'), trans('admin/settings/general.status.settings-file-not-found', ['env' => $envName]), FlashLevel::ERROR);
+            Utils::flashAndAudit(trans('admin/settings/general.audit-log.category'),
+                trans('admin/settings/general.status.settings-file-not-found', ['env' => $envName]), FlashLevel::ERROR);
         }
 
         return redirect('/admin/settings');

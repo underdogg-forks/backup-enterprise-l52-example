@@ -44,7 +44,8 @@ class FlashLevel
     public static function getLevelName($level)
     {
         if (!isset(static::$levels[$level])) {
-            throw new InvalidArgumentException('Level "'.$level.'" is not defined, use one of: '.implode(', ', array_keys(static::$levels)));
+            throw new InvalidArgumentException('Level "' . $level . '" is not defined, use one of: ' . implode(', ',
+                    array_keys(static::$levels)));
         }
 
         return static::$levels[$level];

@@ -9,7 +9,6 @@ class Str extends BaseStr
      * Returns the input string shrunk to the limit size, by cutting in the end (tail).
      * The start (head) of a string will be returned with an ellipsis after it
      * where the text is cut.
-
      * @param $value
      * @param int $limit
      * @param string $end
@@ -21,10 +20,11 @@ class Str extends BaseStr
         $end_len = strlen($end);
         $head_end = $limit - $end_len;
 
-        if ($limit >= $value_len)
+        if ($limit >= $value_len) {
             return $value;
-        else
+        } else {
             return substr($value, 0, $head_end) . $end;
+        }
     }
 
 
@@ -43,10 +43,11 @@ class Str extends BaseStr
         $value_len = strlen($value);
         $start_len = strlen($start);
 
-        if ($limit >= $value_len)
+        if ($limit >= $value_len) {
             return $value;
-        else
+        } else {
             $tail_start = $value_len - $limit + $start_len;
+        }
 
         return $start . substr($value, $tail_start);
     }
@@ -66,12 +67,12 @@ class Str extends BaseStr
     {
         $value_len = strlen($value);
         $mid_len = strlen($mid);
-        $chunk_len = ($limit - $mid_len ) / 2;
+        $chunk_len = ($limit - $mid_len) / 2;
         $tail_start = $value_len - $chunk_len;
 
-        if ($limit >= $value_len)
+        if ($limit >= $value_len) {
             return $value;
-        else {
+        } else {
             $head = substr($value, 0, $chunk_len);
             $tail = substr($value, $tail_start);
             return $head . $mid . $tail;
@@ -153,7 +154,7 @@ class Str extends BaseStr
 
         $isEmpty = empty($question);
 
-        if ( (!$isSet) || ($isNull) || ($isEmpty) ) {
+        if ((!$isSet) || ($isNull) || ($isEmpty)) {
             return true;
         } else {
             return false;

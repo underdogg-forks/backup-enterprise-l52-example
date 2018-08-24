@@ -1,9 +1,10 @@
 <?php namespace App\Repositories\Criteria\Role;
 
-use Bosnadev\Repositories\Criteria\Criteria;
 use Bosnadev\Repositories\Contracts\RepositoryInterface as Repository;
+use Bosnadev\Repositories\Criteria\Criteria;
 
-class RolesWithPermissions extends Criteria {
+class RolesWithPermissions extends Criteria
+{
 
 
     /**
@@ -12,7 +13,7 @@ class RolesWithPermissions extends Criteria {
      *
      * @return mixed
      */
-    public function apply( $model, Repository $repository )
+    public function apply($model, Repository $repository)
     {
         $model = $model->with('perms');
         return $model;

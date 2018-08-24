@@ -1,4 +1,3 @@
-
 <li class="dropdown messages-menu">
     <!-- Menu toggle button -->
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">

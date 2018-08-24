@@ -10,8 +10,8 @@ class FileNotFoundException extends \Exception
     /**
      * Constructor.
      *
-     * @param string     $path
-     * @param int        $code
+     * @param string $path
+     * @param int $code
      * @param \Exception $previous
      */
     public function __construct($path, $code = 0, \Exception $previous = null)

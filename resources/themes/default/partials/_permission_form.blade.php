@@ -1,10 +1,14 @@
 <!-- Custom Tabs -->
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_details" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
-        <li class=""><a href="#tab_options" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
-        <li class=""><a href="#tab_routes" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.routes') !!}</a></li>
-        <li class=""><a href="#tab_roles" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
+        <li class="active"><a href="#tab_details" data-toggle="tab"
+                              aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
+        <li class=""><a href="#tab_options" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
+        <li class=""><a href="#tab_routes" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.routes') !!}</a></li>
+        <li class=""><a href="#tab_roles" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active" id="tab_details">
@@ -70,7 +74,9 @@
                                     @endif
                                 </td>
                                 <td style="text-align: right">
-                                    <a class="btn-remove-route" href="#" title="{{ trans('general.button.remove-route') }}"><i class="fa fa-trash-o deletable"></i></a>
+                                    <a class="btn-remove-route" href="#"
+                                       title="{{ trans('general.button.remove-route') }}"><i
+                                                class="fa fa-trash-o deletable"></i></a>
                                 </td>
                             </tr>
                         @endforeach
@@ -115,7 +121,9 @@
                                     @endif
                                 </td>
                                 <td style="text-align: right">
-                                    <a class="btn-remove-role" href="#" title="{{ trans('general.button.remove-role') }}"><i class="fa fa-trash-o deletable"></i></a>
+                                    <a class="btn-remove-role" href="#"
+                                       title="{{ trans('general.button.remove-role') }}"><i
+                                                class="fa fa-trash-o deletable"></i></a>
                                 </td>
                             </tr>
                         @endforeach

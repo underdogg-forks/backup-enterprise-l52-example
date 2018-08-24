@@ -6,11 +6,6 @@ use Setting;
 
 class AuditRepository extends Repository
 {
-    public function model()
-    {
-        return 'App\Models\Audit';
-    }
-
     /**
      * @param $user_id
      * @param $category
@@ -20,8 +15,14 @@ class AuditRepository extends Repository
      * @param null $replay_route
      * @return bool|static
      */
-    public static function log($user_id, $category, $message, Array $attributes = null, $data_parser = null, $replay_route = null)
-    {
+    public static function log(
+        $user_id,
+        $category,
+        $message,
+        Array $attributes = null,
+        $data_parser = null,
+        $replay_route = null
+    ) {
 
         $audit_enabled = Setting::get('audit.enabled');
         $audit = false;
@@ -49,5 +50,10 @@ class AuditRepository extends Repository
         }
 
         return $audit;
+    }
+
+    public function model()
+    {
+        return 'App\Models\Audit';
     }
 }

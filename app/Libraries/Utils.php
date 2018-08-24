@@ -1,6 +1,10 @@
 <?php namespace App\Libraries;
 
-use App\Libraries\Str;
+use App\Exceptions\JsonEncodingMaxDepthException;
+use App\Exceptions\JsonEncodingStateMismatchException;
+use App\Exceptions\JsonEncodingSyntaxErrorException;
+use App\Exceptions\JsonEncodingUnexpectedControlCharException;
+use App\Exceptions\JsonEncodingUnknownException;
 use App\Repositories\AuditRepository as Audit;
 use App\User;
 use Auth;
@@ -8,13 +12,7 @@ use DateTime;
 use DateTimeZone;
 use Flash;
 use Illuminate\Support\Arr;
-use LERN;
 use Setting;
-use App\Exceptions\JsonEncodingMaxDepthException;
-use App\Exceptions\JsonEncodingStateMismatchException;
-use App\Exceptions\JsonEncodingSyntaxErrorException;
-use App\Exceptions\JsonEncodingUnexpectedControlCharException;
-use App\Exceptions\JsonEncodingUnknownException;
 
 class Utils
 {
@@ -51,6 +49,20 @@ class Utils
         return array($value, $limit, $end);
     }
 
+    /**
+     * Process the parameter input from a blade directive and splits it
+     * into an array of parameters.
+     *
+     * @param $expression
+     * @return array
+     */
+    public static function splitBladeParameters($expression)
+    {
+        $expCleaned = str_replace(['(', ')', ' '], '', $expression);
+        $parms = explode(',', $expCleaned);
+
+        return $parms;
+    }
 
     /**
      * Iterate through the flattened array of settings and removes
@@ -65,7 +77,7 @@ class Utils
     public static function FilterOutUserSettings($allSettings)
     {
         $allNonUserSetting = Arr::where($allSettings, function ($k) {
-            if ("User." === substr( $k, 0, 5 ) ) {
+            if ("User." === substr($k, 0, 5)) {
                 $kparts = explode('.', $k);
                 $user = User::ofUsername($kparts[1])->first();
                 if ($user instanceof User) {
@@ -78,7 +90,6 @@ class Utils
 
         return $allNonUserSetting;
     }
-
 
     /**
      * Evaluate the input variable and if the string can be converted to either
@@ -98,12 +109,11 @@ class Utils
             } elseif (is_int($value)) {
                 $value = intval($value);
             }
-        } catch (\Exception $ex) {}
+        } catch (\Exception $ex) {
+        }
 
         return $value;
     }
-
-
 
     /**
      * Send flash message to the users screen and logs an audit log. If an exception is provided
@@ -119,10 +129,10 @@ class Utils
         $auditMsg = $msg;
 
         // Get current user or set guest to true for unauthenticated users.
-        if ( Auth::check() ) {
-            $user       = Auth::user();
+        if (Auth::check()) {
+            $user = Auth::user();
 
-            if( (isset($exception)) && (strlen($exception->getMessage()) > 0) ) {
+            if ((isset($exception)) && (strlen($exception->getMessage()) > 0)) {
                 $auditMsg = $msg . " Exception information: " . $exception->getMessage();
             }
             switch ($flashLevel) {
@@ -141,23 +151,8 @@ class Utils
                     break;
 
             }
-            Audit::log( $user->id, $auditCategory, $auditMsg );
+            Audit::log($user->id, $auditCategory, $auditMsg);
         }
-    }
-
-    /**
-     * Process the parameter input from a blade directive and splits it
-     * into an array of parameters.
-     *
-     * @param $expression
-     * @return array
-     */
-    public static function splitBladeParameters($expression)
-    {
-        $expCleaned = str_replace(['(', ')', ' '], '', $expression);
-        $parms = explode(',', $expCleaned);
-
-        return $parms;
     }
 
 
@@ -166,6 +161,7 @@ class Utils
      * @return string
      */
 //    public static function convertToLocalDateTime($utcDate)
+
     public static function userTimeZone($date)
     {
         $time_zone = Utils::getUserOrAppOrDefaultSetting('time_zone', 'app.time_zone', 'UTC');
@@ -226,12 +222,13 @@ class Utils
         $fileLinkFormat = ini_get('xdebug.file_link_format') ?: get_cfg_var('xdebug.file_link_format');
 
         if ($linkFormat = $fileLinkFormat) {
-            $link = strtr(self::escapeHtml($linkFormat), array('%f' => $path, '%l' => (int) $line));
+            $link = strtr(self::escapeHtml($linkFormat), array('%f' => $path, '%l' => (int)$line));
 
             return sprintf(' in <a href="%s" title="Go to source">%s line %d</a>', $link, $file, $line);
         }
 
-        return sprintf(' in <a title="%s line %3$d" ondblclick="var f=this.innerHTML;this.innerHTML=this.title;this.title=f;">%s line %d</a>', $path, $file, $line);
+        return sprintf(' in <a title="%s line %3$d" ondblclick="var f=this.innerHTML;this.innerHTML=this.title;this.title=f;">%s line %d</a>',
+            $path, $file, $line);
     }
 
     /**
@@ -252,7 +249,8 @@ class Utils
      * @param $value
      * @return string
      */
-    public static function safe_json_encode($value){
+    public static function safe_json_encode($value)
+    {
         if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
             $encoded = json_encode($value, JSON_PRETTY_PRINT);
         } else {
@@ -287,13 +285,16 @@ class Utils
      * @param $mixed
      * @return array|string
      */
-    public static function utf8ize($mixed) {
+    public static function utf8ize($mixed)
+    {
         if (is_array($mixed)) {
             foreach ($mixed as $key => $value) {
                 $mixed[$key] = self::utf8ize($value);
             }
-        } else if (is_string ($mixed)) {
-            return utf8_encode($mixed);
+        } else {
+            if (is_string($mixed)) {
+                return utf8_encode($mixed);
+            }
         }
         return $mixed;
     }

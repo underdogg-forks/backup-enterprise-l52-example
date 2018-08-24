@@ -45,20 +45,22 @@ class SettingGetCommand extends Command
                 $value = Setting::get($key);
                 if (Str::isNullOrEmptyString($value)) {
                     $this->comment("No setting found or empty setting.");
-                } else if (is_array($value)) {
-                    $value = Arr::dot($value);
-                    foreach($value as $key2 => $value2) {
-                        $this->line("$key.$key2=$value2");
-                    }
                 } else {
-                    $this->line($key . "=" . $value);
+                    if (is_array($value)) {
+                        $value = Arr::dot($value);
+                        foreach ($value as $key2 => $value2) {
+                            $this->line("$key.$key2=$value2");
+                        }
+                    } else {
+                        $this->line($key . "=" . $value);
+                    }
                 }
             } else {
                 $this->error("Missing 'key' argument.");
             }
         } catch (\Exception $ex) {
-            $this->error("Exception: ". $ex->getMessage());
-            $this->error("Stack trace: ". $ex->getTraceAsString());
+            $this->error("Exception: " . $ex->getMessage());
+            $this->error("Stack trace: " . $ex->getTraceAsString());
         }
     }
 }

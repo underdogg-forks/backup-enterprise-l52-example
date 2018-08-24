@@ -12,42 +12,6 @@ class Route extends Model
      */
     protected $fillable = ['name', 'method', 'path', 'action_name', 'enabled'];
 
-
-    public function permission()
-    {
-        return $this->belongsTo('App\Models\Permission');
-    }
-
-    public function menus()
-    {
-        return $this->hasMany('App\Models\Menu');
-    }
-
-    public function scopeOfMethod($query, $method)
-    {
-        return $query->where('method', $method);
-    }
-
-    public function scopeOfActionName($query, $actionName)
-    {
-        return $query->where('action_name', $actionName);
-    }
-
-    public function scopeOfPath($query, $path)
-    {
-        return $query->where('path', $path);
-    }
-
-    public function scopeEnabled($query)
-    {
-        return $query->where('enabled', true);
-    }
-
-    public function scopeDisabled($query)
-    {
-        return $query->where('enabled', false);
-    }
-
     /**
      * Load the Laravel routes into the application routes for
      * permission assignment.
@@ -109,7 +73,6 @@ class Route extends Model
         return $cnt;
     }
 
-
     public static function deleteLaravelRoutes()
     {
         $laravelRoutes = \Route::getRoutes();
@@ -117,7 +80,7 @@ class Route extends Model
         $dbRoutesToDelete = [];
         $cnt = 0;
 
-        foreach( $dbRoutes as $dbRoute) {
+        foreach ($dbRoutes as $dbRoute) {
             $dbRouteActionName = $dbRoute->action_name;
 
             $laravelRoute = null;
@@ -130,15 +93,50 @@ class Route extends Model
             }
             // Laravel route not found, add to list to delete.
             if (null == $laravelRoute) {
-                $dbRoutesToDelete[]= $dbRoute->id;
+                $dbRoutesToDelete[] = $dbRoute->id;
             }
         }
 
-        if ( ($cnt = count($dbRoutesToDelete)) > 0) {
+        if (($cnt = count($dbRoutesToDelete)) > 0) {
             \App\Models\Route::destroy($dbRoutesToDelete);
         }
 
         return $cnt;
+    }
+
+    public function permission()
+    {
+        return $this->belongsTo('App\Models\Permission');
+    }
+
+    public function menus()
+    {
+        return $this->hasMany('App\Models\Menu');
+    }
+
+    public function scopeOfMethod($query, $method)
+    {
+        return $query->where('method', $method);
+    }
+
+    public function scopeOfActionName($query, $actionName)
+    {
+        return $query->where('action_name', $actionName);
+    }
+
+    public function scopeOfPath($query, $path)
+    {
+        return $query->where('path', $path);
+    }
+
+    public function scopeEnabled($query)
+    {
+        return $query->where('enabled', true);
+    }
+
+    public function scopeDisabled($query)
+    {
+        return $query->where('enabled', false);
     }
 
 }

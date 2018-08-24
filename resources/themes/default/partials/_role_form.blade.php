@@ -1,13 +1,17 @@
-<?php $readonly = ($role->isEditable())? '' : 'readonly'; ?>
-<?php $membershipFixed = ($role->canChangeMembership())? '' : 'disabled'; ?>
+<?php $readonly = ($role->isEditable()) ? '' : 'readonly'; ?>
+<?php $membershipFixed = ($role->canChangeMembership()) ? '' : 'disabled'; ?>
 
 <!-- Custom Tabs -->
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_details" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
-        <li class=""><a href="#tab_options" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
-        <li class=""><a href="#tab_perms" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
-        <li class=""><a href="#tab_users" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.users') !!}</a></li>
+        <li class="active"><a href="#tab_details" data-toggle="tab"
+                              aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
+        <li class=""><a href="#tab_options" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
+        <li class=""><a href="#tab_perms" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
+        <li class=""><a href="#tab_users" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.users') !!}</a></li>
     </ul>
     <div class="tab-content">
 
@@ -92,7 +96,9 @@
                                     @endif
                                 </td>
                                 <td style="text-align: right">
-                                    <a class="btn-remove-user" href="#" title="{{ trans('general.button.remove-user') }}"><i class="fa fa-trash-o deletable"></i></a>
+                                    <a class="btn-remove-user" href="#"
+                                       title="{{ trans('general.button.remove-user') }}"><i
+                                                class="fa fa-trash-o deletable"></i></a>
                                 </td>
                             </tr>
                         @endforeach

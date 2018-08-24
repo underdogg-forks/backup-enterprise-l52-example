@@ -16,7 +16,8 @@
 
                 <div class="form-group">
                     {!! Form::button( trans('general.button.update'), ['class' => 'btn btn-primary', 'id' => 'btn-submit-edit'] ) !!}
-                    <a href="{!! route('admin.users.index') !!}" title="{{ trans('general.button.cancel') }}" class='btn btn-default'>{{ trans('general.button.cancel') }}</a>
+                    <a href="{!! route('admin.users.index') !!}" title="{{ trans('general.button.cancel') }}"
+                       class='btn btn-default'>{{ trans('general.button.cancel') }}</a>
                 </div>
 
                 {!! Form::close() !!}

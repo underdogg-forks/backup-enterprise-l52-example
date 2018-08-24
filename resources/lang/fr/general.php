@@ -2,8 +2,8 @@
 
 return [
 
-    'text'              => [
-        'welcome'   => 'Bienvenue',
+    'text' => [
+        'welcome' => 'Bienvenue',
     ],
 
 ];

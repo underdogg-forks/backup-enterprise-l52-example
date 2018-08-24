@@ -18,7 +18,8 @@
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
         <div class="form-group has-feedback">
-            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Password" required/>
+            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control"
+                   placeholder="Password" required/>
             <span class="glyphicon glyphicon-lock form-control-feedback"></span>
         </div>
 

@@ -47,8 +47,8 @@ class SettingForgetCommand extends Command
                 $this->error("Missing 'key' argument.");
             }
         } catch (\Exception $ex) {
-            $this->error("Exception: ". $ex->getMessage());
-            $this->error("Stack trace: ". $ex->getTraceAsString());
+            $this->error("Exception: " . $ex->getMessage());
+            $this->error("Stack trace: " . $ex->getTraceAsString());
         }
     }
 }

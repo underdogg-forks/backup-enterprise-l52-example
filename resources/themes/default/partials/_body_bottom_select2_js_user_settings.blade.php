@@ -1,7 +1,6 @@
-
 <script type="text/javascript">
 
-    $(document).ready(function() {
+    $(document).ready(function () {
 
         $(".select-theme").select2({
             placeholder: '{{ trans('admin/users/general.placeholder.select-theme') }}',

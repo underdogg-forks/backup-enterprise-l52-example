@@ -13,13 +13,13 @@ return [
      | ------------------------------------------------------------------------------------------------
      */
     'stores' => [
-        'json'     => [
+        'json' => [
             'path' => storage_path('app/settings.json'),
         ],
 
         'database' => [
             'connection' => null,
-            'table'      => 'settings',
+            'table' => 'settings',
         ],
     ],
 ];

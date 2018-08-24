@@ -10,13 +10,15 @@
         <div class='col-md-12'>
             <div class="box-body">
 
-                {!! Form::model($audit, ['route' => 'admin.audit.index', 'method' => 'GET']) !!}
+            {!! Form::model($audit, ['route' => 'admin.audit.index', 'method' => 'GET']) !!}
 
-                <!-- Custom Tabs -->
+            <!-- Custom Tabs -->
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_details" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
-                        <li class=""><a href="#tab_data" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.data') !!}</a></li>
+                        <li class="active"><a href="#tab_details" data-toggle="tab"
+                                              aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
+                        <li class=""><a href="#tab_data" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.data') !!}</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_details">
@@ -57,7 +59,9 @@
                 <div class="form-group">
                     {!! Form::submit(trans('general.button.close'), ['class' => 'btn btn-primary']) !!}
                     @if ( $audit->replay_route )
-                        <a href="{!! route('admin.audit.replay', $audit->id) !!}" title="{{ trans('general.button.replay') }}" class="btn btn-default">{{ trans('general.button.replay') }}</a>
+                        <a href="{!! route('admin.audit.replay', $audit->id) !!}"
+                           title="{{ trans('general.button.replay') }}"
+                           class="btn btn-default">{{ trans('general.button.replay') }}</a>
                     @endif
                 </div>
 

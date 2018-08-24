@@ -31,21 +31,12 @@ class MenuBuilderManager
         $this->app = $app;
     }
 
-    public function renderMenu( $topNode = 'root', $includeTopNode = false, $menuHandlerName = null )
+    public function renderMenu($topNode = 'root', $includeTopNode = false, $menuHandlerName = null)
     {
         $menuHandler = $this->instantiateHandler($menuHandlerName);
 
         // Call the render function and return the output.
         return $menuHandler->renderMenu($topNode, $includeTopNode);
-
-    }
-
-    public function renderBreadcrumbTrail( $leaf = null, $topNode = 'root', $includeTopNode = false, $menuHandlerName = null )
-    {
-        $menuHandler = $this->instantiateHandler($menuHandlerName);
-
-        // Call the render function and return the output.
-        return $menuHandler->renderBreadcrumbTrail($leaf, $topNode, $includeTopNode);
 
     }
 
@@ -71,6 +62,19 @@ class MenuBuilderManager
         // Instantiate the menuHandler and return it.
         $menuHandler = new $menuHandlerName($this->app);
         return $menuHandler;
+    }
+
+    public function renderBreadcrumbTrail(
+        $leaf = null,
+        $topNode = 'root',
+        $includeTopNode = false,
+        $menuHandlerName = null
+    ) {
+        $menuHandler = $this->instantiateHandler($menuHandlerName);
+
+        // Call the render function and return the output.
+        return $menuHandler->renderBreadcrumbTrail($leaf, $topNode, $includeTopNode);
+
     }
 
 }

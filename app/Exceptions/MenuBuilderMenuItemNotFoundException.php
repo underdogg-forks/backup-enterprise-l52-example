@@ -1,4 +1,5 @@
 <?php namespace App\Exceptions;
+
 /**
  * This file is part of the Laravel package: Menu-Builder,
  * a menu and breadcrumb trails management solution for Laravel.
@@ -7,6 +8,6 @@
  * @author Sebastien Routier (sroutier@gmail.com)
  * @package Sroutier\MenuBuilder
  */
-
-
-class MenuBuilderMenuItemNotFoundException extends \Exception {}
+class MenuBuilderMenuItemNotFoundException extends \Exception
+{
+}

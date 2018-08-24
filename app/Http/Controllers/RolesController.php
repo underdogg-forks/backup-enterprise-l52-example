@@ -52,7 +52,8 @@ class RolesController extends Controller
      */
     public function index()
     {
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-index'));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-index'));
 
         $page_title = trans('admin/roles/general.page.index.title'); // "Admin | Roles";
         $page_description = trans('admin/roles/general.page.index.description'); // "List of roles";
@@ -70,10 +71,12 @@ class RolesController extends Controller
     {
         $role = $this->role->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-show', ['name' => $role->name]));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-show', ['name' => $role->name]));
 
         $page_title = trans('admin/roles/general.page.show.title'); // "Admin | Role | Show";
-        $page_description = trans('admin/roles/general.page.show.description', ['name' => $role->name]); // "Displaying role";
+        $page_description = trans('admin/roles/general.page.show.description',
+            ['name' => $role->name]); // "Displaying role";
 
         $perms = $this->permission->all();
 
@@ -102,18 +105,19 @@ class RolesController extends Controller
     public function store(Request $request)
     {
 
-        $this->validate($request, array(    'name'          => 'required|unique:roles',
-                                            'display_name'  => 'required'
+        $this->validate($request, array(
+            'name' => 'required|unique:roles',
+            'display_name' => 'required'
         ));
 
         $attributes = $request->all();
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-store', ['name' => $attributes['name']]));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-store', ['name' => $attributes['name']]));
 
-        if ( (array_key_exists('selected_users', $attributes)) && (!empty($attributes['selected_users'])) ) {
+        if ((array_key_exists('selected_users', $attributes)) && (!empty($attributes['selected_users']))) {
             $attributes['users'] = explode(",", $attributes['selected_users']);
-        }
-        else {
+        } else {
             $attributes['users'] = null;
         }
 
@@ -123,7 +127,7 @@ class RolesController extends Controller
         $role->forcePermission('basic-authenticated');
         $role->saveUsers($attributes['users']);
 
-        Flash::success( trans('admin/roles/general.status.created') ); // 'Role successfully created');
+        Flash::success(trans('admin/roles/general.status.created')); // 'Role successfully created');
 
         return redirect('/admin/roles');
     }
@@ -137,12 +141,14 @@ class RolesController extends Controller
     {
         $role = $this->role->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-edit', ['name' => $role->name]));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-edit', ['name' => $role->name]));
 
         $page_title = trans('admin/roles/general.page.edit.title'); // "Admin | Role | Edit";
-        $page_description = trans('admin/roles/general.page.edit.description', ['name' => $role->name]); // "Editing role";
+        $page_description = trans('admin/roles/general.page.edit.description',
+            ['name' => $role->name]); // "Editing role";
 
-        if( !$role->isEditable() &&  !$role->canChangePermissions() ) {
+        if (!$role->isEditable() && !$role->canChangePermissions()) {
             abort(403);
         }
 
@@ -159,17 +165,19 @@ class RolesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, array(    'name'          => 'required|unique:roles,name,' . $id,
-                                            'display_name'  => 'required',
+        $this->validate($request, array(
+            'name' => 'required|unique:roles,name,' . $id,
+            'display_name' => 'required',
         ));
 
         $role = $this->role->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-update', ['name' => $role->name]));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-update', ['name' => $role->name]));
 
         $attributes = $request->all();
 
-        if ( (array_key_exists('selected_users', $attributes)) && (!empty($attributes['selected_users'])) ) {
+        if ((array_key_exists('selected_users', $attributes)) && (!empty($attributes['selected_users']))) {
             $attributes['users'] = explode(",", $attributes['selected_users']);
         } else {
             $attributes['users'] = [];
@@ -189,7 +197,7 @@ class RolesController extends Controller
             $role->saveUsers($attributes['users']);
         }
 
-        Flash::success( trans('admin/roles/general.status.updated') ); // 'Role successfully updated');
+        Flash::success(trans('admin/roles/general.status.updated')); // 'Role successfully updated');
 
         return redirect('/admin/roles');
     }
@@ -207,11 +215,12 @@ class RolesController extends Controller
             abort(403);
         }
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-destroy', ['name' => $role->name]));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-destroy', ['name' => $role->name]));
 
         $this->role->delete($id);
 
-        Flash::success( trans('admin/roles/general.status.deleted') ); // 'Role successfully deleted');
+        Flash::success(trans('admin/roles/general.status.deleted')); // 'Role successfully deleted');
 
         return redirect('/admin/roles');
     }
@@ -219,7 +228,7 @@ class RolesController extends Controller
     /**
      * Delete Confirm
      *
-     * @param   int   $id
+     * @param   int $id
      *
      * @return  View
      */
@@ -252,7 +261,8 @@ class RolesController extends Controller
     {
         $role = $this->role->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-enable', ['name' => $role->name]));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-enable', ['name' => $role->name]));
 
         $role->enabled = true;
         $role->save();
@@ -273,7 +283,8 @@ class RolesController extends Controller
 
         $role = $this->role->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-disabled', ['name' => $role->name]));
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-disabled', ['name' => $role->name]));
 
         $role->enabled = false;
         $role->save();
@@ -292,7 +303,8 @@ class RolesController extends Controller
     {
         $chkRoles = $request->input('chkRole');
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-enabled-selected'), $chkRoles);
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-enabled-selected'), $chkRoles);
 
         if (isset($chkRoles)) {
             foreach ($chkRoles as $role_id) {
@@ -318,7 +330,8 @@ class RolesController extends Controller
 
         $chkRoles = $request->input('chkRole');
 
-        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'), trans('admin/roles/general.audit-log.msg-disabled-selected'), $chkRoles);
+        Audit::log(Auth::user()->id, trans('admin/roles/general.audit-log.category'),
+            trans('admin/roles/general.audit-log.msg-disabled-selected'), $chkRoles);
 
         if (isset($chkRoles)) {
             foreach ($chkRoles as $role_id) {
@@ -351,7 +364,7 @@ class RolesController extends Controller
             $display_name = $role->display_name;
             $description = $role->description;
 
-            $entry_arr = [ 'id' => $id, 'text' => "$display_name ($description)"];
+            $entry_arr = ['id' => $id, 'text' => "$display_name ($description)"];
             $return_arr[] = $entry_arr;
         }
 

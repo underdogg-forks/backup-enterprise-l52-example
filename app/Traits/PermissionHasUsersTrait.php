@@ -16,7 +16,7 @@ trait PermissionHasUsersTrait
     {
         parent::boot();
 
-        static::deleting(function($permission) {
+        static::deleting(function ($permission) {
             if (!method_exists(Config::get('entrust.permission'), 'bootSoftDeletingTrait')) {
                 // Repeat role->sync code attached from EntrustPermissionTrait::boot() as this boot()
                 // function overwrites it.
@@ -45,8 +45,8 @@ trait PermissionHasUsersTrait
      */
     public function hasUser($userName)
     {
-        return $this->whereHas('users', function($query) use ($userName) {
-           $query->where('username', $userName); 
+        return $this->whereHas('users', function ($query) use ($userName) {
+            $query->where('username', $userName);
         })->exists();
     }
 

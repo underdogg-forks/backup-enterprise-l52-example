@@ -14,10 +14,17 @@ class Permission extends EntrustPermission
      */
     protected $fillable = ['name', 'display_name', 'description', 'enabled'];
 
-
-    public function routes()
+    /**
+     * @param $perm
+     * @return bool
+     */
+    public static function isForced($perm)
     {
-        return $this->hasMany('App\Models\Route');
+        if ('basic-authenticated' == $perm->name) {
+            return true;
+        }
+
+        return false;
     }
 
     public function menu()
@@ -110,24 +117,12 @@ class Permission extends EntrustPermission
     }
 
     /**
-     * @param $perm
-     * @return bool
-     */
-    public static function isForced($perm)
-    {
-        if ('basic-authenticated' == $perm->name) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * @param array $attributes
      */
     public function assignRoutes(array $attributes = [])
     {
-        if (array_key_exists('routes', $attributes) && (is_array($attributes['routes'])) && ("" != $attributes['routes'][0])) {
+        if (array_key_exists('routes',
+                $attributes) && (is_array($attributes['routes'])) && ("" != $attributes['routes'][0])) {
             $this->clearRouteAssociation();
 
             foreach ($attributes['routes'] as $id) {
@@ -139,18 +134,6 @@ class Permission extends EntrustPermission
         }
     }
 
-    /**
-     * @param array $attributes
-     */
-    public function assignRoles(array $attributes = [])
-    {
-        if (array_key_exists('roles', $attributes) && (is_array($attributes['roles'])) && ("" != $attributes['roles'][0])) {
-            $this->roles()->sync($attributes['roles']);
-        } else {
-            $this->roles()->sync([]);
-        }
-    }
-
     public function clearRouteAssociation()
     {
         foreach ($this->routes as $route) {
@@ -158,5 +141,23 @@ class Permission extends EntrustPermission
             $route->save();
         }
         $this->save();
+    }
+
+    public function routes()
+    {
+        return $this->hasMany('App\Models\Route');
+    }
+
+    /**
+     * @param array $attributes
+     */
+    public function assignRoles(array $attributes = [])
+    {
+        if (array_key_exists('roles',
+                $attributes) && (is_array($attributes['roles'])) && ("" != $attributes['roles'][0])) {
+            $this->roles()->sync($attributes['roles']);
+        } else {
+            $this->roles()->sync([]);
+        }
     }
 }

@@ -5,21 +5,21 @@ return [
     /**
      * Enables recording of exception.
      */
-    'enable_record'   => env('lern.enable_record', false),
+    'enable_record' => env('lern.enable_record', false),
 
     /**
      * Enables notification of exception.
      */
-    'enable_notify'   => env('lern.enable_notify', false),
+    'enable_notify' => env('lern.enable_notify', false),
 
     'record' => [
         'table' => 'lern_exceptions',
         'collect' => [
-            'method'      => true, //When true it will collect GET, POST, DELETE, PUT, etc...
-            'data'        => true, //When true it will collect Input data
+            'method' => true, //When true it will collect GET, POST, DELETE, PUT, etc...
+            'data' => true, //When true it will collect Input data
             'status_code' => true,
-            'user_id'     => true,
-            'url'         => true,
+            'user_id' => true,
+            'url' => true,
         ],
 
         /**
@@ -40,17 +40,17 @@ return [
          * When using the default message body this will also include the stack trace
          */
         'includeExceptionStackTrace' => true,
-        
+
         /**
          * mail, pushover, slack, etc...
          */
-        'drivers'=>['mail'],
+        'drivers' => ['mail'],
 
         /**
          * Mail settings
          */
-        'mail'=>[
-            'to'   => env('lern.mail_recipient'),
+        'mail' => [
+            'to' => env('lern.mail_recipient'),
             'from' => env('mail.system_sender_address'),
             'smtp' => false,
         ],
@@ -58,17 +58,17 @@ return [
         /**
          * Mailgun settings
          */
-        'mailgun'=>[
-            'to'    => env('MAILGUN_TO'),
-            'from'  => env('MAILGUN_FROM'),
+        'mailgun' => [
+            'to' => env('MAILGUN_TO'),
+            'from' => env('MAILGUN_FROM'),
             'token' => env('MAILGUN_APP_TOKEN'),
-            'domain'=> env('MAILGUN_DOMAIN'),
+            'domain' => env('MAILGUN_DOMAIN'),
         ],
 
         /**
          * Pushover settings
          */
-        'pushover'=>[
+        'pushover' => [
             'token' => env('PUSHOVER_APP_TOKEN'),
             'users' => env('PUSHOVER_USER_KEY'),
             'sound' => env('PUSHOVER_SOUND_ERROR', 'siren'), // https://pushover.net/api#sounds
@@ -77,62 +77,62 @@ return [
         /**
          * Slack settings
          */
-        'slack'=>[
-            'token'   => env('SLACK_APP_TOKEN'), //https://api.slack.com/web#auth
+        'slack' => [
+            'token' => env('SLACK_APP_TOKEN'), //https://api.slack.com/web#auth
             'channel' => env('SLACK_CHANNEL', '#exceptions'), //Dont forget the '#'
-            'username'=> env('SLACK_USERNAME', 'LERN'), //The 'from' name
+            'username' => env('SLACK_USERNAME', 'LERN'), //The 'from' name
         ],
 
         /**
          * HipChat settings
          */
-        'hipchat'=>[
+        'hipchat' => [
             'token' => env('HIPCHAT_APP_TOKEN'),
-            'room'  => 'room',
-            'name'  => 'name',
-            'notify'=> true,
+            'room' => 'room',
+            'name' => 'name',
+            'notify' => true,
         ],
 
         /**
          * Flowdock settings
          */
-        'flowdock'=>[
+        'flowdock' => [
             'token' => env('FLOWDOCK_APP_TOKEN'),
         ],
 
         /**
          * Fleephook settings
          */
-        'fleephook'=>[
+        'fleephook' => [
             'token' => env('FLEEPHOOK_APP_TOKEN'),
         ],
 
         /**
          * Plivo settings
          */
-        'plivo'=>[
+        'plivo' => [
             'auth_id' => env('PLIVO_AUTH_ID'),
-            'token'   => env('PLIVO_AUTH_TOKEN'),
-            'to'      => env('PLIVO_TO'),
-            'from'    => env('PLIVO_FROM'),
+            'token' => env('PLIVO_AUTH_TOKEN'),
+            'to' => env('PLIVO_TO'),
+            'from' => env('PLIVO_FROM'),
         ],
 
         /**
          * Twilio settings
          */
-        'twilio'=>[
-            'sid'    => env('TWILIO_AUTH_SID'),
+        'twilio' => [
+            'sid' => env('TWILIO_AUTH_SID'),
             'secret' => env('TWILIO_AUTH_SECRET'),
-            'to'     => env('TWILIO_TO'),
-            'from'   => env('TWILIO_FROM'),
+            'to' => env('TWILIO_TO'),
+            'from' => env('TWILIO_FROM'),
         ],
 
         /**
          * Raven settings
          */
-        'raven'=>[
-            'dsn'   => env('RAVEN_DSN'),
+        'raven' => [
+            'dsn' => env('RAVEN_DSN'),
         ]
     ],
-    
+
 ];

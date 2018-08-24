@@ -10,15 +10,19 @@
         <div class='col-md-12'>
             <div class="box-body">
 
-                {!! Form::model($user, ['route' => 'admin.users.index', 'method' => 'GET']) !!}
+            {!! Form::model($user, ['route' => 'admin.users.index', 'method' => 'GET']) !!}
 
-                <!-- Custom Tabs -->
+            <!-- Custom Tabs -->
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_profile" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.profile') !!}</a></li>
-                        <li class=""><a href="#tab_settings" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.settings') !!}</a></li>
-                        <li class=""><a href="#tab_roles" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
-                        <li class=""><a href="#tab_perms" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
+                        <li class="active"><a href="#tab_profile" data-toggle="tab"
+                                              aria-expanded="true">{!! trans('general.tabs.profile') !!}</a></li>
+                        <li class=""><a href="#tab_settings" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.settings') !!}</a></li>
+                        <li class=""><a href="#tab_roles" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
+                        <li class=""><a href="#tab_perms" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
                     </ul>
                     <div class="tab-content">
 
@@ -80,9 +84,14 @@
                             </div>
 
                             <div class="form-group">
-                                {!! Form::label('time_format', trans('admin/users/general.columns.time_format')) !!}&nbsp;
-                                <label class="radio-inline"><input type="radio" name="time_format" value="12" {{("12"==$time_format)?'checked="checked"':''}} readonly="readonly">{{trans('admin/users/general.options.12_hours')}}</label>
-                                <label class="radio-inline"><input type="radio" name="time_format" value="24" {{("24"==$time_format)?'checked="checked"':''}} readonly="readonly">{{trans('admin/users/general.options.24_hours')}}</label>
+                                {!! Form::label('time_format', trans('admin/users/general.columns.time_format')) !!}
+                                &nbsp;
+                                <label class="radio-inline"><input type="radio" name="time_format" value="12"
+                                                                   {{("12"==$time_format)?'checked="checked"':''}} readonly="readonly">{{trans('admin/users/general.options.12_hours')}}
+                                </label>
+                                <label class="radio-inline"><input type="radio" name="time_format" value="24"
+                                                                   {{("24"==$time_format)?'checked="checked"':''}} readonly="readonly">{{trans('admin/users/general.options.24_hours')}}
+                                </label>
                             </div>
 
                             <div class="form-group">
@@ -139,30 +148,30 @@
                                 <div class="box-body table-responsive no-padding">
                                     <table class="table table-hover">
                                         <tbody>
+                                        <tr>
+                                            <th>{!! trans('admin/users/general.columns.name')  !!}</th>
+                                            <th>{!! trans('admin/users/general.columns.assigned')  !!}</th>
+                                            <th>{!! trans('admin/users/general.columns.effective')  !!}</th>
+                                        </tr>
+                                        @foreach($perms as $perm)
                                             <tr>
-                                                <th>{!! trans('admin/users/general.columns.name')  !!}</th>
-                                                <th>{!! trans('admin/users/general.columns.assigned')  !!}</th>
-                                                <th>{!! trans('admin/users/general.columns.effective')  !!}</th>
+                                                <td>{!! link_to_route('admin.permissions.show', $perm->display_name, [$perm->id], []) !!}</td>
+                                                <td>
+                                                    @if($user->hasPermission($perm->name))
+                                                        <i class="fa fa-check text-green"></i>
+                                                    @else
+                                                        <i class="fa fa-close text-red"></i>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($user->can($perm->name))
+                                                        <i class="fa fa-check text-green"></i>
+                                                    @else
+                                                        <i class="fa fa-close text-red"></i>
+                                                    @endif
+                                                </td>
                                             </tr>
-                                            @foreach($perms as $perm)
-                                                <tr>
-                                                    <td>{!! link_to_route('admin.permissions.show', $perm->display_name, [$perm->id], []) !!}</td>
-                                                    <td>
-                                                        @if($user->hasPermission($perm->name))
-                                                            <i class="fa fa-check text-green"></i>
-                                                        @else
-                                                            <i class="fa fa-close text-red"></i>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if($user->can($perm->name))
-                                                            <i class="fa fa-check text-green"></i>
-                                                        @else
-                                                            <i class="fa fa-close text-red"></i>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
+                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -174,7 +183,8 @@
 
                 <div class="form-group">
                     {!! Form::submit(trans('general.button.close'), ['class' => 'btn btn-primary']) !!}
-                    <a href="{!! route('admin.users.edit', $user->id) !!}" title="{{ trans('general.button.edit') }}" class='btn btn-default'>{{ trans('general.button.edit') }}</a>
+                    <a href="{!! route('admin.users.edit', $user->id) !!}" title="{{ trans('general.button.edit') }}"
+                       class='btn btn-default'>{{ trans('general.button.edit') }}</a>
                 </div>
 
                 {!! Form::close() !!}

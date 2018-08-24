@@ -1,10 +1,14 @@
 <!-- Custom Tabs -->
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_profile" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.profile') !!}</a></li>
-        <li class=""><a href="#tab_settings" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.settings') !!}</a></li>
-        <li class=""><a href="#tab_roles" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
-        <li class=""><a href="#tab_perms" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
+        <li class="active"><a href="#tab_profile" data-toggle="tab"
+                              aria-expanded="true">{!! trans('general.tabs.profile') !!}</a></li>
+        <li class=""><a href="#tab_settings" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.settings') !!}</a></li>
+        <li class=""><a href="#tab_roles" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
+        <li class=""><a href="#tab_perms" data-toggle="tab"
+                        aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
     </ul>
     <div class="tab-content">
 
@@ -86,8 +90,12 @@
             <div class="form-group">
                 {!! '<input type="hidden" name="time_format" value="">' !!}
                 {!! Form::label('time_format', trans('admin/users/general.columns.time_format')) !!}&nbsp;
-                <label class="radio-inline"><input type="radio" name="time_format" value="12" {{("12"==$time_format)?'checked="checked"':''}}>{{trans('admin/users/general.options.12_hours')}}</label>
-                <label class="radio-inline"><input type="radio" name="time_format" value="24" {{("24"==$time_format)?'checked="checked"':''}}>{{trans('admin/users/general.options.24_hours')}}</label>
+                <label class="radio-inline"><input type="radio" name="time_format"
+                                                   value="12" {{("12"==$time_format)?'checked="checked"':''}}>{{trans('admin/users/general.options.12_hours')}}
+                </label>
+                <label class="radio-inline"><input type="radio" name="time_format"
+                                                   value="24" {{("24"==$time_format)?'checked="checked"':''}}>{{trans('admin/users/general.options.24_hours')}}
+                </label>
             </div>
 
             <div class="form-group">
@@ -107,7 +115,7 @@
                         {!! Form::select('role_search', [], null, ['class' => 'form-control', 'id' => 'role_search',  'style' => "width: 100%"]) !!}
                     @endif
                     <span class="input-group-btn">
-                        <button class="btn btn-default"  id="btn-add-role" type="button">
+                        <button class="btn btn-default" id="btn-add-role" type="button">
                             <span class="fa fa-plus-square"></span>
                         </button>
                     </span>
@@ -138,7 +146,9 @@
                                     @if ( $user->isRoot() )
                                         <i class="fa fa-trash-o text-muted"></i>
                                     @else
-                                        <a class="btn-remove-role" href="#" title="{{ trans('general.button.remove-role') }}"><i class="fa fa-trash-o deletable"></i></a>
+                                        <a class="btn-remove-role" href="#"
+                                           title="{{ trans('general.button.remove-role') }}"><i
+                                                    class="fa fa-trash-o deletable"></i></a>
                                     @endif
                                 </td>
                             </tr>

@@ -19,14 +19,14 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
 
-                @if (Auth::check())
+            @if (Auth::check())
 
-                    @if ( Setting::get('app.context_help_area') && (isset($context_help_area)))
-                        {!! $context_help_area   !!}
-                    @endif
+                @if ( Setting::get('app.context_help_area') && (isset($context_help_area)))
+                    {!! $context_help_area   !!}
+                @endif
 
-                    @if ( Setting::get('app.notification_area') )
-                        <!-- Messages: style can be found in dropdown.less-->
+                @if ( Setting::get('app.notification_area') )
+                    <!-- Messages: style can be found in dropdown.less-->
                         <li class="dropdown messages-menu">
                             <!-- Menu toggle button -->
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -42,7 +42,8 @@
                                             <a href="#">
                                                 <div class="pull-left">
                                                     <!-- User Image -->
-                                                    <img src="{{ asset("/bower_components/admin-lte/dist/img/generic_user_160x160.jpg") }}" class="img-circle" alt="User Image"/>
+                                                    <img src="{{ asset("/bower_components/admin-lte/dist/img/generic_user_160x160.jpg") }}"
+                                                         class="img-circle" alt="User Image"/>
                                                 </div>
                                                 <!-- Message title and timestamp -->
                                                 <h4>
@@ -102,7 +103,9 @@
                                                 <!-- The progress bar -->
                                                 <div class="progress xs">
                                                     <!-- Change the css width attribute to simulate progress -->
-                                                    <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
+                                                    <div class="progress-bar progress-bar-aqua" style="width: 20%"
+                                                         role="progressbar" aria-valuenow="20" aria-valuemin="0"
+                                                         aria-valuemax="100">
                                                         <span class="sr-only">20% Complete</span>
                                                     </div>
                                                 </div>
@@ -115,29 +118,31 @@
                                 </li>
                             </ul>
                         </li>
-                    @endif
+                @endif
 
-                    <!-- User Account Menu -->
+                <!-- User Account Menu -->
                     <li class="dropdown user user-menu">
                         <!-- Menu Toggle Button -->
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <!-- The user image in the navbar-->
-                            <img src="{{ Gravatar::get(Auth::user()->email , 'tiny') }}" class="user-image" alt="User Image"/>
+                            <img src="{{ Gravatar::get(Auth::user()->email , 'tiny') }}" class="user-image"
+                                 alt="User Image"/>
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
                             <span class="hidden-xs">{{ Auth::user()->username }}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- The user image in the menu -->
                             <li class="user-header">
-                                <img src="{{ Gravatar::get(Auth::user()->email , 'medium') }}" class="img-circle" alt="User Image" />
+                                <img src="{{ Gravatar::get(Auth::user()->email , 'medium') }}" class="img-circle"
+                                     alt="User Image"/>
                                 <p>
                                     {{ Auth::user()->full_name }}
                                     <small>Member since {{ Auth::user()->created_at->format("F, Y") }}</small>
                                 </p>
                             </li>
 
-                            @if ( Setting::get('app.extended_user_menu') )
-                                <!-- Menu Body -->
+                        @if ( Setting::get('app.extended_user_menu') )
+                            <!-- Menu Body -->
                                 <li class="user-body">
                                     <div class="col-xs-4 text-center">
                                         <a href="#">Followers</a>
@@ -149,9 +154,9 @@
                                         <a href="#">Friends</a>
                                     </div>
                                 </li>
-                            @endif
+                        @endif
 
-                            <!-- Menu Footer-->
+                        <!-- Menu Footer-->
                             <li class="user-footer">
 
                                 @if ( Setting::get('app.user_profile_link') )
@@ -167,8 +172,8 @@
                         </ul>
                     </li>
 
-                    @if ( Setting::get('app.right_sidebar') )
-                        <!-- Control Sidebar Toggle Button -->
+                @if ( Setting::get('app.right_sidebar') )
+                    <!-- Control Sidebar Toggle Button -->
                         <li>
                             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
                         </li>

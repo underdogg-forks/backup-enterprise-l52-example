@@ -1,4 +1,5 @@
 <?php namespace App\Providers;
+
 /**
  * This file is part of the Laravel package: Menu-Builder,
  * a menu and breadcrumb trails management solution for Laravel.
@@ -28,7 +29,7 @@ class MenuBuilderServiceProvider extends ServiceProvider
     public function register()
     {
         // Bind to the key 'MenuBuilder' to a closure instantiating to the MenuBuilderManager.
-        $this->app->bind('MenuBuilder', function($app) {
+        $this->app->bind('MenuBuilder', function ($app) {
             return new MenuBuilderManager($app);
         });
     }

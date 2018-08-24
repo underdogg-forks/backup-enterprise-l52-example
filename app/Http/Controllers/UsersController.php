@@ -17,7 +17,6 @@ use Auth;
 use Flash;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
-use Mail;
 use Setting;
 
 class UsersController extends Controller
@@ -45,11 +44,56 @@ class UsersController extends Controller
     public function __construct(Application $app, Audit $audit, User $user, Role $role, Permission $perm)
     {
         parent::__construct($app, $audit);
-        $this->user  = $user;
-        $this->role  = $role;
-        $this->perm  = $perm;
+        $this->user = $user;
+        $this->role = $role;
+        $this->perm = $perm;
         // Set default crumbtrail for controller.
         session(['crumbtrail.leaf' => 'users']);
+    }
+
+    static public function ParseUpdateAuditLog($id)
+    {
+        $permsObj = [];
+        $permsNoFound = [];
+        $rolesObj = [];
+        $rolesNotFound = [];
+
+        $audit = \App\Models\Audit::find($id);
+        $dataAtt = json_decode($audit->data, true);
+
+        // Lookup and load the perms that we can still find, otherwise add to an separate array.
+        if (array_key_exists('perms', $dataAtt)) {
+            foreach ($dataAtt['perms'] as $id) {
+                $perm = \App\Models\Permission::find($id);
+                if ($perm) {
+                    $permsObj[] = $perm;
+                } else {
+                    $permsNoFound[] = trans('admin/users/general.error.perm_not_found', ['id' => $id]);
+                }
+            }
+        }
+        $dataAtt['permsObj'] = $permsObj;
+        $dataAtt['permsNotFound'] = $permsNoFound;
+
+        // Lookup and load the roles that we can still find, otherwise add to an separate array.
+        if (array_key_exists('selected_roles', $dataAtt)) {
+            $aRolesIDs = explode(",", $dataAtt['selected_roles']);
+            foreach ($aRolesIDs as $id) {
+                $role = \App\Models\Role::find($id);
+                if ($role) {
+                    $rolesObj[] = $role;
+                } else {
+                    $rolesNotFound[] = trans('admin/users/general.error.perm_not_found', ['id' => $id]);
+                }
+            }
+        }
+        $dataAtt['rolesObj'] = $rolesObj;
+        $dataAtt['rolesNotFound'] = $rolesNotFound;
+
+        // Add the file name of the partial (blade) that will render this data.
+        $dataAtt['show_partial'] = 'admin/users/_audit_log_data_viewer_update';
+
+        return $dataAtt;
     }
 
     /**
@@ -57,7 +101,8 @@ class UsersController extends Controller
      */
     public function index()
     {
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-index'));
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-index'));
 
         $page_title = trans('admin/users/general.page.index.title'); // "Admin | Users";
         $page_description = trans('admin/users/general.page.index.description'); // "List of users";
@@ -73,10 +118,12 @@ class UsersController extends Controller
     {
         $user = $this->user->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-show', ['username' => $user->username]));
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-show', ['username' => $user->username]));
 
         $page_title = trans('admin/users/general.page.show.title'); // "Admin | User | Show";
-        $page_description = trans('admin/users/general.page.show.description', ['full_name' => $user->full_name]); // "Displaying user";
+        $page_description = trans('admin/users/general.page.show.description',
+            ['full_name' => $user->full_name]); // "Displaying user";
 
         $perms = $this->perm->pushCriteria(new PermissionsByNamesAscending())->all();
 
@@ -89,7 +136,8 @@ class UsersController extends Controller
             $locale = "";
         }
 
-        return view('admin.users.show', compact('user', 'perms', 'theme', 'time_format', 'locale', 'page_title', 'page_description'));
+        return view('admin.users.show',
+            compact('user', 'perms', 'theme', 'time_format', 'locale', 'page_title', 'page_description'));
     }
 
     /**
@@ -114,7 +162,9 @@ class UsersController extends Controller
 
         $locales = Setting::get('app.supportedLocales');
 
-        return view('admin.users.create', compact('user', 'perms', 'themes', 'time_zones', 'tzKey', 'time_format', 'locales', 'page_title', 'page_description'));
+        return view('admin.users.create',
+            compact('user', 'perms', 'themes', 'time_zones', 'tzKey', 'time_format', 'locales', 'page_title',
+                'page_description'));
     }
 
     /**
@@ -128,9 +178,10 @@ class UsersController extends Controller
 
         $attributes = $request->all();
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-store', ['username' => $attributes['username']]));
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-store', ['username' => $attributes['username']]));
 
-        if ( (array_key_exists('selected_roles', $attributes)) && (!empty($attributes['selected_roles'])) ) {
+        if ((array_key_exists('selected_roles', $attributes)) && (!empty($attributes['selected_roles']))) {
             $attributes['role'] = explode(",", $attributes['selected_roles']);
         } else {
             $attributes['role'] = [];
@@ -141,7 +192,7 @@ class UsersController extends Controller
         // Run the update method to set enabled status and roles membership.
         $user->update($attributes);
 
-        Flash::success( trans('admin/users/general.status.created') ); // 'User successfully created');
+        Flash::success(trans('admin/users/general.status.created')); // 'User successfully created');
 
         return redirect('/admin/users');
     }
@@ -155,10 +206,12 @@ class UsersController extends Controller
     {
         $user = $this->user->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-edit', ['username' => $user->username]));
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-edit', ['username' => $user->username]));
 
         $page_title = trans('admin/users/general.page.edit.title'); // "Admin | User | Edit";
-        $page_description = trans('admin/users/general.page.edit.description', ['full_name' => $user->full_name]); // "Editing user";
+        $page_description = trans('admin/users/general.page.edit.description',
+            ['full_name' => $user->full_name]); // "Editing user";
 
         $roles = $this->role->pushCriteria(new RolesByNamesAscending())->all();
         $perms = $this->perm->pushCriteria(new PermissionsByNamesAscending())->all();
@@ -174,54 +227,9 @@ class UsersController extends Controller
 
         $locales = Setting::get('app.supportedLocales');
 
-        return view('admin.users.edit', compact('user', 'roles', 'perms', 'themes', 'time_zones', 'tzKey', 'time_format', 'locales', 'page_title', 'page_description'));
-    }
-
-    static public function ParseUpdateAuditLog($id)
-    {
-        $permsObj = [];
-        $permsNoFound = [];
-        $rolesObj = [];
-        $rolesNotFound = [];
-
-        $audit   = \App\Models\Audit::find($id);
-        $dataAtt = json_decode($audit->data, true);
-
-        // Lookup and load the perms that we can still find, otherwise add to an separate array.
-        if (array_key_exists('perms', $dataAtt)) {
-            foreach($dataAtt['perms'] as $id) {
-                $perm = \App\Models\Permission::find($id);
-                if ($perm) {
-                    $permsObj[] = $perm;
-                }
-                else {
-                    $permsNoFound[] = trans('admin/users/general.error.perm_not_found', ['id' => $id]);
-                }
-            }
-        }
-        $dataAtt['permsObj'] = $permsObj;
-        $dataAtt['permsNotFound'] = $permsNoFound;
-
-        // Lookup and load the roles that we can still find, otherwise add to an separate array.
-        if (array_key_exists('selected_roles', $dataAtt)) {
-            $aRolesIDs = explode(",", $dataAtt['selected_roles']);
-            foreach($aRolesIDs as $id) {
-                $role = \App\Models\Role::find($id);
-                if ($role) {
-                    $rolesObj[] = $role;
-                }
-                else {
-                    $rolesNotFound[] = trans('admin/users/general.error.perm_not_found', ['id' => $id]);
-                }
-            }
-        }
-        $dataAtt['rolesObj'] = $rolesObj;
-        $dataAtt['rolesNotFound'] = $rolesNotFound;
-
-        // Add the file name of the partial (blade) that will render this data.
-        $dataAtt['show_partial'] = 'admin/users/_audit_log_data_viewer_update';
-
-        return $dataAtt;
+        return view('admin.users.edit',
+            compact('user', 'roles', 'perms', 'themes', 'time_zones', 'tzKey', 'time_format', 'locales', 'page_title',
+                'page_description'));
     }
 
     /**
@@ -244,17 +252,18 @@ class UsersController extends Controller
         $user = $this->user->find($att['id']);
 
         if (null == $user) {
-            Flash::warning( trans('admin/users/general.error.user_not_found', [ 'id' => $att['id'] ]) );
+            Flash::warning(trans('admin/users/general.error.user_not_found', ['id' => $att['id']]));
             return \Redirect::route('admin.audit.index');
         }
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-replay-edit', ['username' => $user->username]));
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-replay-edit', ['username' => $user->username]));
 
         $page_title = trans('admin/users/general.page.edit.title'); // "Admin | User | Edit";
-        $page_description = trans('admin/users/general.page.edit.description', ['full_name' => $user->full_name]); // "Editing user";
+        $page_description = trans('admin/users/general.page.edit.description',
+            ['full_name' => $user->full_name]); // "Editing user";
 
-        if ($user->isRoot())
-        {
+        if ($user->isRoot()) {
             abort(403);
         }
 
@@ -290,7 +299,9 @@ class UsersController extends Controller
         $locales = Setting::get('app.supportedLocales');
         $locale = $att['locale'];
 
-        return view('admin.users.edit', compact('user', 'roles', 'perms', 'themes', 'theme', 'time_zones', 'tzKey', 'time_format', 'locale', 'locales', 'page_title', 'page_description'));
+        return view('admin.users.edit',
+            compact('user', 'roles', 'perms', 'themes', 'theme', 'time_zones', 'tzKey', 'time_format', 'locale',
+                'locales', 'page_title', 'page_description'));
     }
 
     /**
@@ -311,13 +322,10 @@ class UsersController extends Controller
         $passwordChanged = false;
         // Fix #17 as per @sloan58
         // Check if the password was submitted and has changed.
-        if(!\Hash::check($attributes['password'],$user->password) && $attributes['password'] != '')
-        {
+        if (!\Hash::check($attributes['password'], $user->password) && $attributes['password'] != '') {
             // Password was changed, set flag for later.
             $passwordChanged = true;
-        }
-        else
-        {
+        } else {
             // Password was not changed or was not submitted, delete attribute from array to prevent it
             // from being set to blank.
             unset($attributes['password']);
@@ -330,18 +338,18 @@ class UsersController extends Controller
         // Add the id of the current user for the replay action.
         $replayAtt["id"] = $id;
         // Create log entry with replay data.
-        $tmp = Audit::log( Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-update', ['username' => $user->username]),
-            $replayAtt, "App\Http\Controllers\UsersController::ParseUpdateAuditLog", "admin.users.replay-edit" );
+        $tmp = Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-update', ['username' => $user->username]),
+            $replayAtt, "App\Http\Controllers\UsersController::ParseUpdateAuditLog", "admin.users.replay-edit");
 
 
-        if ( (array_key_exists('selected_roles', $attributes)) && (!empty($attributes['selected_roles'])) ) {
+        if ((array_key_exists('selected_roles', $attributes)) && (!empty($attributes['selected_roles']))) {
             $attributes['role'] = explode(",", $attributes['selected_roles']);
         } else {
             $attributes['role'] = [];
         }
 
-        if ($user->isRoot())
-        {
+        if ($user->isRoot()) {
             // Prevent changes to some fields for the root user.
             unset($attributes['username']);
             unset($attributes['first_name']);
@@ -357,7 +365,7 @@ class UsersController extends Controller
             $user->emailPasswordChange();
         }
 
-        Flash::success( trans('admin/users/general.status.updated') );
+        Flash::success(trans('admin/users/general.status.updated'));
 
         return redirect('/admin/users');
     }
@@ -370,16 +378,16 @@ class UsersController extends Controller
     {
         $user = $this->user->find($id);
 
-        if (!$user->isdeletable())
-        {
+        if (!$user->isdeletable()) {
             abort(403);
         }
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-destroy', ['username' => $user->username]));
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-destroy', ['username' => $user->username]));
 
         $this->user->delete($id);
 
-        Flash::success( trans('admin/users/general.status.deleted') );
+        Flash::success(trans('admin/users/general.status.deleted'));
 
         return redirect('/admin/users');
     }
@@ -387,7 +395,7 @@ class UsersController extends Controller
     /**
      * Delete Confirm
      *
-     * @param   int   $id
+     * @param   int $id
      * @return  View
      */
     public function getModalDelete($id)
@@ -396,8 +404,7 @@ class UsersController extends Controller
 
         $user = $this->user->find($id);
 
-        if (!$user->isdeletable())
-        {
+        if (!$user->isdeletable()) {
             abort(403);
         }
 
@@ -407,10 +414,9 @@ class UsersController extends Controller
             $user = $this->user->find($id);
             $modal_route = route('admin.users.delete', array('id' => $user->id));
 
-            $modal_body = trans('admin/users/dialog.delete-confirm.body', ['id' => $user->id, 'full_name' => $user->full_name]);
-        }
-        else
-        {
+            $modal_body = trans('admin/users/dialog.delete-confirm.body',
+                ['id' => $user->id, 'full_name' => $user->full_name]);
+        } else {
             $error = trans('admin/users/general.error.cant-delete-yourself');
         }
         return view('modal_confirmation', compact('error', 'modal_route', 'modal_title', 'modal_body'));
@@ -425,7 +431,8 @@ class UsersController extends Controller
     {
         $user = $this->user->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-enable', ['username' => $user->username]));
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-enable', ['username' => $user->username]));
 
         $user->enabled = true;
         $user->save();
@@ -443,13 +450,11 @@ class UsersController extends Controller
     {
         $user = $this->user->find($id);
 
-        if (!$user->canBeDisabled())
-        {
+        if (!$user->canBeDisabled()) {
             Flash::error(trans('admin/users/general.error.cant-be-disabled'));
-        }
-        else
-        {
-            Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-disabled', ['username' => $user->username]));
+        } else {
+            Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+                trans('admin/users/general.audit-log.msg-disabled', ['username' => $user->username]));
 
             $user->enabled = false;
             $user->save();
@@ -466,20 +471,17 @@ class UsersController extends Controller
     {
         $chkUsers = $request->input('chkUser');
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-enabled-selected'), $chkUsers);
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-enabled-selected'), $chkUsers);
 
-        if (isset($chkUsers))
-        {
-            foreach ($chkUsers as $user_id)
-            {
+        if (isset($chkUsers)) {
+            foreach ($chkUsers as $user_id) {
                 $user = $this->user->find($user_id);
                 $user->enabled = true;
                 $user->save();
             }
             Flash::success(trans('admin/users/general.status.global-enabled'));
-        }
-        else
-        {
+        } else {
             Flash::warning(trans('admin/users/general.status.no-user-selected'));
         }
         return redirect('/admin/users');
@@ -492,27 +494,21 @@ class UsersController extends Controller
     {
         $chkUsers = $request->input('chkUser');
 
-        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'), trans('admin/users/general.audit-log.msg-disabled-selected'), $chkUsers);
+        Audit::log(Auth::user()->id, trans('admin/users/general.audit-log.category'),
+            trans('admin/users/general.audit-log.msg-disabled-selected'), $chkUsers);
 
-        if (isset($chkUsers))
-        {
-            foreach ($chkUsers as $user_id)
-            {
+        if (isset($chkUsers)) {
+            foreach ($chkUsers as $user_id) {
                 $user = $this->user->find($user_id);
-                if (!$user->canBeDisabled())
-                {
+                if (!$user->canBeDisabled()) {
                     Flash::error(trans('admin/users/general.error.cant-be-disabled'));
-                }
-                else
-                {
+                } else {
                     $user->enabled = false;
                     $user->save();
                 }
             }
             Flash::success(trans('admin/users/general.status.global-disabled'));
-        }
-        else
-        {
+        } else {
             Flash::warning(trans('admin/users/general.status.no-user-selected'));
         }
         return redirect('/admin/users');
@@ -532,7 +528,7 @@ class UsersController extends Controller
             $last_name = $user->last_name;
             $username = $user->username;
 
-            $entry_arr = [ 'id' => $id, 'text' => "$first_name $last_name ($username)"];
+            $entry_arr = ['id' => $id, 'text' => "$first_name $last_name ($username)"];
             $return_arr[] = $entry_arr;
         }
 
@@ -571,7 +567,8 @@ class UsersController extends Controller
     {
         $user = Auth::user();
 
-        Audit::log(Auth::user()->id, trans('general.audit-log.category-profile'), trans('general.audit-log.msg-profile-show', ['username' => $user->username]));
+        Audit::log(Auth::user()->id, trans('general.audit-log.category-profile'),
+            trans('general.audit-log.msg-profile-show', ['username' => $user->username]));
 
         $page_title = trans('general.page.profile.title');
         $page_description = trans('general.page.profile.description', ['full_name' => $user->full_name]);
@@ -593,7 +590,9 @@ class UsersController extends Controller
 
         // Unset default crumbtrail set in controller ctor.
         session()->pull('crumbtrail.leaf');
-        return view('user.profile', compact('user', 'perms', 'themes', 'theme', 'time_zones', 'tzKey', 'time_format', 'locale', 'locales', 'readOnlyIfLDAP', 'page_title', 'page_description'));
+        return view('user.profile',
+            compact('user', 'perms', 'themes', 'theme', 'time_zones', 'tzKey', 'time_format', 'locale', 'locales',
+                'readOnlyIfLDAP', 'page_title', 'page_description'));
     }
 
     /**
@@ -607,7 +606,8 @@ class UsersController extends Controller
 
         $this->validate($request, \app\User::getUpdateValidationRules($user->id));
 
-        Audit::log(Auth::user()->id, trans('general.audit-log.category-profile'), trans('general.audit-log.msg-profile-update', ['username' => $user->username]));
+        Audit::log(Auth::user()->id, trans('general.audit-log.category-profile'),
+            trans('general.audit-log.msg-profile-update', ['username' => $user->username]));
 
         // Get all attribute from the request.
         $attributes = $request->all();
@@ -616,13 +616,10 @@ class UsersController extends Controller
         $passwordChanged = false;
         // Fix #17 as per @sloan58
         // Check if the password was submitted and has changed.
-        if(!\Hash::check($attributes['password'],$user->password) && $attributes['password'] != '')
-        {
+        if (!\Hash::check($attributes['password'], $user->password) && $attributes['password'] != '') {
             // Password was changed, set flag for later.
             $passwordChanged = true;
-        }
-        else
-        {
+        } else {
             // Password was not changed or was not submitted, delete attribute from array to prevent it
             // from being set to blank.
             unset($attributes['password']);
@@ -630,8 +627,7 @@ class UsersController extends Controller
             $passwordChanged = false;
         }
         // Prevent changes to some fields for the root user.
-        if ($user->isRoot())
-        {
+        if ($user->isRoot()) {
             unset($attributes['username']);
             unset($attributes['first_name']);
             unset($attributes['last_name']);
@@ -659,7 +655,7 @@ class UsersController extends Controller
             $user->emailPasswordChange();
         }
 
-        Flash::success( trans('general.status.profile.updated') );
+        Flash::success(trans('general.status.profile.updated'));
 
         return redirect()->route('user.profile');
     }

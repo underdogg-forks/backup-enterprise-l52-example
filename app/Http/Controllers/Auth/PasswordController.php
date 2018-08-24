@@ -41,7 +41,7 @@ class PasswordController extends Controller
     public function __construct(User $user)
     {
         $this->middleware('guest');
-        $this->user  = $user;
+        $this->user = $user;
     }
 
     /**
@@ -59,7 +59,7 @@ class PasswordController extends Controller
     /**
      * Send a reset link to the given user.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function postEmail(Request $request)
@@ -69,13 +69,13 @@ class PasswordController extends Controller
         $email = $request->input('email');
         $user = $this->user->pushCriteria(new UserWhereEmailEquals($email))->all()->first();
 
-        Audit::log(null, trans('passwords.audit-log.category'), trans('passwords.audit-log.msg-request-reset', ['email' => $email]));
+        Audit::log(null, trans('passwords.audit-log.category'),
+            trans('passwords.audit-log.msg-request-reset', ['email' => $email]));
 
         if (is_null($user)) {
-            Flash::error( trans(Password::INVALID_USER) );
+            Flash::error(trans(Password::INVALID_USER));
             return redirect()->back();
-        }
-        elseif ($user->auth_type !== 'internal') {
+        } elseif ($user->auth_type !== 'internal') {
             Flash::error(trans('passwords.auth_type'));
             return redirect()->back();
         } else {
@@ -90,7 +90,7 @@ class PasswordController extends Controller
                     return redirect()->back()->with('status', trans($response));
 
                 case Password::INVALID_USER:
-                    Flash::error( trans($response) );
+                    Flash::error(trans($response));
                     return redirect()->back()->withErrors(['email' => trans($response)]);
             }
         }
@@ -99,7 +99,7 @@ class PasswordController extends Controller
     /**
      * Display the password reset view for the given token.
      *
-     * @param  string  $token
+     * @param  string $token
      * @return \Illuminate\Http\Response
      */
     public function getReset($token = null)
@@ -116,7 +116,7 @@ class PasswordController extends Controller
     /**
      * Reset the given user's password.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function postReset(Request $request)
@@ -135,7 +135,8 @@ class PasswordController extends Controller
             $this->resetPassword($user, $password);
         });
 
-        Audit::log(null, trans('passwords.audit-log.category'), trans('passwords.audit-log.msg-reset-password', ['email' => $credentials['email']]));
+        Audit::log(null, trans('passwords.audit-log.category'),
+            trans('passwords.audit-log.msg-reset-password', ['email' => $credentials['email']]));
 
         switch ($response) {
             case Password::PASSWORD_RESET:
@@ -152,8 +153,8 @@ class PasswordController extends Controller
     /**
      * Reset the given user's password.
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @param  string  $password
+     * @param  \Illuminate\Contracts\Auth\CanResetPassword $user
+     * @param  string $password
      * @return void
      */
     protected function resetPassword($user, $password)

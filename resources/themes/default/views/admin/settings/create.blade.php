@@ -10,12 +10,13 @@
 
                 {!! Form::open( ['route' => 'admin.settings.store', 'id' => 'form_edit_setting'] ) !!}
 
-                    @include('partials._setting_form')
+                @include('partials._setting_form')
 
-                    <div class="form-group">
-                        {!! Form::submit( trans('general.button.create'), ['class' => 'btn btn-primary', 'id' => 'btn-submit-edit'] ) !!}
-                        <a href="{!! route('admin.settings.index') !!}" title="{{ trans('general.button.cancel') }}" class='btn btn-default'>{{ trans('general.button.cancel') }}</a>
-                    </div>
+                <div class="form-group">
+                    {!! Form::submit( trans('general.button.create'), ['class' => 'btn btn-primary', 'id' => 'btn-submit-edit'] ) !!}
+                    <a href="{!! route('admin.settings.index') !!}" title="{{ trans('general.button.cancel') }}"
+                       class='btn btn-default'>{{ trans('general.button.cancel') }}</a>
+                </div>
 
                 {!! Form::close() !!}
 

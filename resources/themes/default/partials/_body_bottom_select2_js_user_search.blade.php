@@ -50,7 +50,7 @@
                 userFullname = data['full_name'];
                 userEnabled = data['enabled'];
 
-                if(1 == userEnabled) {
+                if (1 == userEnabled) {
                     userStatus = '<i class="fa fa-check text-green"></i>';
                 }
                 else {
@@ -58,14 +58,14 @@
                 }
 
                 // Build table cells.
-                idCell     = '<td class="hidden" rowname="id">' + userID + '</td>';
-                fullnameCel    = '<td>' + '<a href="' + urlShowUser + '">' + userFullname + '</a>' + '</td>';
-                nameCel    = '<td>' + '<a href="' + urlShowUser + '">' + userName + '</a>' + '</td>';
+                idCell = '<td class="hidden" rowname="id">' + userID + '</td>';
+                fullnameCel = '<td>' + '<a href="' + urlShowUser + '">' + userFullname + '</a>' + '</td>';
+                nameCel = '<td>' + '<a href="' + urlShowUser + '">' + userName + '</a>' + '</td>';
                 enabledCel = '<td>' + userStatus + '</td>';
-                actionCel  = '<td style="text-align: right"><a class="btn-remove-user" href="#" title="{{ trans('general.button.remove-user') }}"><i class="fa fa-trash-o deletable"></i></a></td>';
+                actionCel = '<td style="text-align: right"><a class="btn-remove-user" href="#" title="{{ trans('general.button.remove-user') }}"><i class="fa fa-trash-o deletable"></i></a></td>';
 
                 // Add selected item only if not already in list.
-                if ( $('#tbl-users tr > td[rowname="id"]:contains(' + userID + ')').length == 0 ) {
+                if ($('#tbl-users tr > td[rowname="id"]:contains(' + userID + ')').length == 0) {
                     $('#tbl-users > tbody:last-child').append('<tr>' + idCell + fullnameCel + nameCel + enabledCel + actionCel + '</tr>');
                 }
 
@@ -74,7 +74,7 @@
 
     });
 
-    $('body').on('click', 'a.btn-remove-user', function() {
+    $('body').on('click', 'a.btn-remove-user', function () {
         $(this).parent().parent().remove();
     });
 </script>

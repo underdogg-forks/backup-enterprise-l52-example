@@ -2,10 +2,9 @@
 
 namespace App;
 
-use App\Models\Setting as SettingModel;
-use App\Libraries\Str;
 use App\Models\Error;
 use App\Models\Role;
+use App\Models\Setting as SettingModel;
 use App\Traits\UserHasPermissionsTrait;
 use Auth;
 use Illuminate\Auth\Authenticatable;
@@ -66,6 +65,65 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     protected $settings = null;
 
     /**
+     * Overwrite Model::create(...) to save group membership if included,
+     * or clear it if not. Also force membership to group 'users'.
+     *
+     * @param array $attributes
+     * @return User
+     */
+    public static function create(array $attributes = [])
+    {
+
+        // If the auth_type is not explicitly set by the call function or module,
+        // set it to the internal value.
+        if (!array_key_exists('auth_type', $attributes) || ("" == ($attributes['auth_type']))) {
+            $attributes['auth_type'] = Setting::get('eloquent-ldap.label_internal');
+        }
+
+        // Call original create method from parent
+        $user = parent::create($attributes);
+
+        // Assign membership(s)
+        $user->assignMembership($attributes);
+        // Assign permission(s)
+        $user->assignPermission($attributes);
+        // Force membership to group 'users'
+        $user->forceRole('users');
+
+        return $user;
+    }
+
+    /**
+     * Returns the validation rules required to create a User.
+     *
+     * @return array
+     */
+    public static function getCreateValidationRules()
+    {
+        return array(
+            'username' => 'required|unique:users',
+            'email' => 'required|unique:users',
+            'first_name' => 'required',
+            'last_name' => 'required',
+        );
+    }
+
+    /**
+     * Returns the validation rules required to update a User.
+     *
+     * @return array
+     */
+    public static function getUpdateValidationRules($id)
+    {
+        return array(
+            'username' => 'required|unique:users,username,' . $id,
+            'email' => 'required|unique:users,email,' . $id,
+            'first_name' => 'required',
+            'last_name' => 'required',
+        );
+    }
+
+    /**
      * Eloquent hook to HasMany relationship between User and Audit
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -83,34 +141,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function errors()
     {
         return $this->hasMany(Error::class);
-    }
-
-    /**
-     * Alias to eloquent many-to-many relation's sync() method.
-     *
-     * @param array $attributes
-     */
-    private function assignMembership(array $attributes = [])
-    {
-        if (array_key_exists('role', $attributes) && ($attributes['role'])) {
-            $this->roles()->sync($attributes['role']);
-        } else {
-            $this->roles()->sync([]);
-        }
-    }
-
-    /**
-     * Alias to eloquent many-to-many relation's sync() method.
-     *
-     * @param array $attributes
-     */
-    private function assignPermission(array $attributes = [])
-    {
-        if (array_key_exists('perms', $attributes) && ($attributes['perms'])) {
-            $this->permissions()->sync($attributes['perms']);
-        } else {
-            $this->permissions()->sync([]);
-        }
     }
 
     /**
@@ -160,7 +190,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
         // Prevent user from deleting his own account.
-        if ( Auth::check() && (Auth::user()->id == $this->id) ) {
+        if (Auth::check() && (Auth::user()->id == $this->id)) {
             return false;
         }
         // Otherwise
@@ -177,100 +207,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
         }
         // Prevent user from disabling his own account.
-        if ( Auth::check() && (Auth::user()->id == $this->id) ) {
+        if (Auth::check() && (Auth::user()->id == $this->id)) {
             return false;
         }
         // Otherwise
         return true;
-    }
-
-    /**
-     *
-     * Force the user to have the given role.
-     *
-     * @param $roleName
-     */
-    public function forceRole($roleName)
-    {
-        // If the user is not a member to the given role,
-        if (null == $this->roles()->where('name', $roleName)->first()) {
-            // Load the given role and attach it to the user.
-            $roleToForce = Role::where('name', $roleName)->first();
-            $this->roles()->attach($roleToForce->id);
-        }
-    }
-
-    /**
-     * Code copy of EntrustUserTrait::hasRole(...) with the one addition to,
-     * optionally, check if a role is enabled before returning true.
-     *
-     * @param $name
-     * @param bool $requireAll
-     * @return bool
-     */
-    public function hasRole($name, $requireAll = false, $mustBeEnabled = true)
-    {
-        if (is_array($name)) {
-            foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName);
-
-                if ($hasRole && !$requireAll) {
-                    return true;
-                } elseif (!$hasRole && $requireAll) {
-                    return false;
-                }
-            }
-
-            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
-            // Return the value of $requireAll;
-            return $requireAll;
-        } else {
-            foreach ($this->roles as $role) {
-                if ($role->name == $name) {
-                    if ( $mustBeEnabled ) {
-                        if ($role->enabled) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Overwrite Model::create(...) to save group membership if included,
-     * or clear it if not. Also force membership to group 'users'.
-     *
-     * @param array $attributes
-     * @return User
-     */
-    public static function create(array $attributes = [])
-    {
-
-        // If the auth_type is not explicitly set by the call function or module,
-        // set it to the internal value.
-        if (!array_key_exists('auth_type', $attributes) || ("" == ($attributes['auth_type'])) ) {
-            $attributes['auth_type'] = Setting::get('eloquent-ldap.label_internal');
-        }
-
-        // Call original create method from parent
-        $user = parent::create($attributes);
-
-        // Assign membership(s)
-        $user->assignMembership($attributes);
-        // Assign permission(s)
-        $user->assignPermission($attributes);
-        // Force membership to group 'users'
-        $user->forceRole('users');
-
-        return $user;
     }
 
     /**
@@ -283,26 +224,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function update(array $attributes = [])
     {
 
-        if ( array_key_exists('first_name', $attributes) ) {
+        if (array_key_exists('first_name', $attributes)) {
             $this->first_name = $attributes['first_name'];
         }
-        if ( array_key_exists('last_name', $attributes) ) {
+        if (array_key_exists('last_name', $attributes)) {
             $this->last_name = $attributes['last_name'];
         }
-        if ( array_key_exists('username', $attributes) ) {
-            if ( $attributes['username'] != $this->username ) {
+        if (array_key_exists('username', $attributes)) {
+            if ($attributes['username'] != $this->username) {
                 // Forget settings asociated to previous username. New settings will be saved bellow.
                 Setting::forget($this->settings()->prefix());
             }
             $this->username = $attributes['username'];
         }
-        if ( array_key_exists('email', $attributes) ) {
+        if (array_key_exists('email', $attributes)) {
             $this->email = $attributes['email'];
         }
-        if( array_key_exists('password', $attributes) ) {
+        if (array_key_exists('password', $attributes)) {
             $this->password = $attributes['password'];
         }
-        if( array_key_exists('enabled', $attributes) ) {
+        if (array_key_exists('enabled', $attributes)) {
             $this->enabled = $attributes['enabled'];
         }
         $this->save();
@@ -324,69 +265,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Overwrite Model::delete() to clear/delete user settings first,
-     * then invoke original delete method.
-     *
-     * @throws \Exception
-     */
-    public function delete()
-    {
-        $this->settings()->forget();
-        parent::delete();
-    }
-
-    /**
-     * Implements the 'isMemberOf(...)' as required by Eloquent-LDAP by using
-     * the hasRole method and ignoring the enable state of the role.
-     *
-     * @param $name
-     * @return bool
-     */
-    public function isMemberOf($name)
-    {
-        return $this->hasRole($name, false, false);
-    }
-
-    /**
-     * Implements the 'membershipList()' method as required by Eloquent-LDAP.
-     *
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function membershipList()
-    {
-        return $this->roles();
-    }
-
-    /**
-     * Returns the validation rules required to create a User.
-     *
-     * @return array
-     */
-    public static function getCreateValidationRules()
-    {
-        return array( 'username'          => 'required|unique:users',
-                      'email'             => 'required|unique:users',
-                      'first_name'        => 'required',
-                      'last_name'         => 'required',
-                    );
-    }
-
-    /**
-     * Returns the validation rules required to update a User.
-     *
-     * @return array
-     */
-    public static function getUpdateValidationRules($id)
-    {
-        return array( 'username'          => 'required|unique:users,username,' . $id,
-                      'email'             => 'required|unique:users,email,' . $id,
-                      'first_name'        => 'required',
-                      'last_name'         => 'required',
-                    );
-    }
-
-    /**
      * Return the existing instance of the users settings or create a new one.
      *
      * @return Setting
@@ -397,6 +275,50 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return $this->settings;
         } else {
             return new SettingModel('User.' . $this->username);
+        }
+    }
+
+    /**
+     * Alias to eloquent many-to-many relation's sync() method.
+     *
+     * @param array $attributes
+     */
+    private function assignMembership(array $attributes = [])
+    {
+        if (array_key_exists('role', $attributes) && ($attributes['role'])) {
+            $this->roles()->sync($attributes['role']);
+        } else {
+            $this->roles()->sync([]);
+        }
+    }
+
+    /**
+     * Alias to eloquent many-to-many relation's sync() method.
+     *
+     * @param array $attributes
+     */
+    private function assignPermission(array $attributes = [])
+    {
+        if (array_key_exists('perms', $attributes) && ($attributes['perms'])) {
+            $this->permissions()->sync($attributes['perms']);
+        } else {
+            $this->permissions()->sync([]);
+        }
+    }
+
+    /**
+     *
+     * Force the user to have the given role.
+     *
+     * @param $roleName
+     */
+    public function forceRole($roleName)
+    {
+        // If the user is not a member to the given role,
+        if (null == $this->roles()->where('name', $roleName)->first()) {
+            // Load the given role and attach it to the user.
+            $roleToForce = Role::where('name', $roleName)->first();
+            $this->roles()->attach($roleToForce->id);
         }
     }
 
@@ -434,6 +356,85 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
+     * Overwrite Model::delete() to clear/delete user settings first,
+     * then invoke original delete method.
+     *
+     * @throws \Exception
+     */
+    public function delete()
+    {
+        $this->settings()->forget();
+        parent::delete();
+    }
+
+    /**
+     * Implements the 'isMemberOf(...)' as required by Eloquent-LDAP by using
+     * the hasRole method and ignoring the enable state of the role.
+     *
+     * @param $name
+     * @return bool
+     */
+    public function isMemberOf($name)
+    {
+        return $this->hasRole($name, false, false);
+    }
+
+    /**
+     * Code copy of EntrustUserTrait::hasRole(...) with the one addition to,
+     * optionally, check if a role is enabled before returning true.
+     *
+     * @param $name
+     * @param bool $requireAll
+     * @return bool
+     */
+    public function hasRole($name, $requireAll = false, $mustBeEnabled = true)
+    {
+        if (is_array($name)) {
+            foreach ($name as $roleName) {
+                $hasRole = $this->hasRole($roleName);
+
+                if ($hasRole && !$requireAll) {
+                    return true;
+                } elseif (!$hasRole && $requireAll) {
+                    return false;
+                }
+            }
+
+            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
+            // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
+            // Return the value of $requireAll;
+            return $requireAll;
+        } else {
+            foreach ($this->roles as $role) {
+                if ($role->name == $name) {
+                    if ($mustBeEnabled) {
+                        if ($role->enabled) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Implements the 'membershipList()' method as required by Eloquent-LDAP.
+     *
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function membershipList()
+    {
+        return $this->roles();
+    }
+
+    /**
      * Scope a query to only include users of a given username
      *
      * @param $query
@@ -468,10 +469,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $this->confirmation_code = $confirmation_code;
             $this->save();
             // Send email.
-            Mail::send(['html' => 'emails.html.email_validation', 'text' => 'emails.text.email_validation'], ['user' => $this], function ($message) {
-                $message->from(Setting::get('mail.system_sender_address'), Setting::get('mail.system_sender_label'));
-                $message->to($this->email, $this->full_name)->subject(trans('emails.email_validation.subject', ['first_name' => $this->first_name]));
-            });
+            Mail::send(['html' => 'emails.html.email_validation', 'text' => 'emails.text.email_validation'],
+                ['user' => $this], function ($message) {
+                    $message->from(Setting::get('mail.system_sender_address'),
+                        Setting::get('mail.system_sender_label'));
+                    $message->to($this->email, $this->full_name)->subject(trans('emails.email_validation.subject',
+                        ['first_name' => $this->first_name]));
+                });
         }
     }
 
@@ -482,10 +486,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         if (Setting::get('app.email_notifications')) {
             // Send an email to the user to notify him of the password change.
-            Mail::send(['html' => 'emails.html.password_changed', 'text' => 'emails.text.password_changed'], ['user' => $this], function ($message) {
-                $message->from(Setting::get('mail.system_sender_address'), Setting::get('mail.system_sender_label'));
-                $message->to($this->email, $this->full_name)->subject(trans('emails.password_changed.subject'));
-            });
+            Mail::send(['html' => 'emails.html.password_changed', 'text' => 'emails.text.password_changed'],
+                ['user' => $this], function ($message) {
+                    $message->from(Setting::get('mail.system_sender_address'),
+                        Setting::get('mail.system_sender_label'));
+                    $message->to($this->email, $this->full_name)->subject(trans('emails.password_changed.subject'));
+                });
         }
     }
 
@@ -496,20 +502,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getRememberToken()
     {
-        if ( Setting::get('auth.enable_remember_token') ) {
+        if (Setting::get('auth.enable_remember_token')) {
             return $this->authenticatableGetRememberToken();
-        }
-        else {
+        } else {
             return null; // not supported
         }
     }
 
     public function setRememberToken($value)
     {
-        if ( Setting::get('auth.enable_remember_token') ) {
+        if (Setting::get('auth.enable_remember_token')) {
             $this->authenticatableSetRememberToken($value);
-        }
-        else {
+        } else {
             // not supported
         }
     }
@@ -519,14 +523,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function setAttribute($key, $value)
     {
-        if ( Setting::get('auth.enable_remember_token') ) {
+        if (Setting::get('auth.enable_remember_token')) {
             parent::setAttribute($key, $value);
-        }
-        else {
+        } else {
             // Filter out remember token.
             $isRememberTokenAttribute = $key == $this->getRememberTokenName();
-            if (!$isRememberTokenAttribute)
-            {
+            if (!$isRememberTokenAttribute) {
                 parent::setAttribute($key, $value);
             }
         }

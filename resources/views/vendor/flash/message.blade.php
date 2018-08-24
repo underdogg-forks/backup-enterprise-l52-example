@@ -17,8 +17,8 @@
         </div>
         @if (Setting::get('app.flash_notification_auto_hide_enabled', true))
             <script>
-                $(document).ready (function(){
-                    $('div.alert').not('.alert-important').delay({{ Setting::get('app.flash_notification_auto_hide_delay', true) * 1000 }}).slideUp(200, function() {
+                $(document).ready(function () {
+                    $('div.alert').not('.alert-important').delay({{ Setting::get('app.flash_notification_auto_hide_delay', true) * 1000 }}).slideUp(200, function () {
                         $(this).alert('close');
                     });
                 });

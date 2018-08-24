@@ -1,11 +1,9 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
 use App\Repositories\AuditRepository as Audit;
 use Artisan;
 use Auth;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
 use Sroutier\LESKModules\Facades\Module;
 
@@ -30,7 +28,8 @@ class ModulesController extends Controller
      */
     public function index()
     {
-        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'), trans('admin/modules/general.audit-log.msg-index'));
+        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'),
+            trans('admin/modules/general.audit-log.msg-index'));
 
         $page_title = trans('admin/modules/general.page.index.title');
         $page_description = trans('admin/modules/general.page.index.description');
@@ -38,9 +37,9 @@ class ModulesController extends Controller
         // Get all Modules
         $modules = Module::all();
         // Sort by order then by name.
-        $modules = $modules->sort(function($a, $b) {
-            if($a['order'] === $b['order']) {
-                if($a['name'] === $b['name']) {
+        $modules = $modules->sort(function ($a, $b) {
+            if ($a['order'] === $b['order']) {
+                if ($a['name'] === $b['name']) {
                     return 0;
                 }
                 return $a['name'] < $b['name'] ? -1 : 1;
@@ -58,7 +57,8 @@ class ModulesController extends Controller
      */
     public function optimize()
     {
-        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'), trans('admin/modules/general.audit-log.msg-optimize'));
+        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'),
+            trans('admin/modules/general.audit-log.msg-optimize'));
 
         Artisan::call('module:optimize');
 
@@ -76,7 +76,8 @@ class ModulesController extends Controller
      */
     public function disable($slug)
     {
-        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'), trans('admin/modules/general.audit-log.msg-disable', ['slug' => $slug]));
+        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'),
+            trans('admin/modules/general.audit-log.msg-disable', ['slug' => $slug]));
 
         $module = \Module::where('slug', $slug)->first();
 
@@ -109,7 +110,8 @@ class ModulesController extends Controller
      */
     public function enable($slug)
     {
-        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'), trans('admin/modules/general.audit-log.msg-enable', ['slug' => $slug]));
+        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'),
+            trans('admin/modules/general.audit-log.msg-enable', ['slug' => $slug]));
 
         $module = \Module::where('slug', $slug)->first();
 
@@ -141,7 +143,8 @@ class ModulesController extends Controller
      */
     public function initialize($slug)
     {
-        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'), trans('admin/modules/general.audit-log.msg-initialize', ['slug' => $slug]));
+        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'),
+            trans('admin/modules/general.audit-log.msg-initialize', ['slug' => $slug]));
 
         $module = \Module::where('slug', $slug)->first();
 
@@ -167,7 +170,8 @@ class ModulesController extends Controller
 
         $modal_title = trans('admin/modules/general.delete-confirm.title');
         $modal_route = route('admin.modules.uninitialize', array('slug' => $slug));
-        $modal_body = trans('admin/modules/general.delete-confirm.body', [ 'slug' => $module['slug'], 'name' => $module['name'] ]);
+        $modal_body = trans('admin/modules/general.delete-confirm.body',
+            ['slug' => $module['slug'], 'name' => $module['name']]);
 
         return view('modal_confirmation', compact('error', 'modal_route', 'modal_title', 'modal_body'));
     }
@@ -181,7 +185,8 @@ class ModulesController extends Controller
      */
     public function uninitialize($slug)
     {
-        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'), trans('admin/modules/general.audit-log.msg-uninitialize', ['slug' => $slug]));
+        Audit::log(Auth::user()->id, trans('admin/modules/general.audit-log.category'),
+            trans('admin/modules/general.audit-log.msg-uninitialize', ['slug' => $slug]));
 
         $module = \Module::where('slug', $slug)->first();
 

@@ -1,9 +1,8 @@
-
 <script type="text/javascript">
     $("#btn-submit-edit").on("click", function () {
-        var routes=[], roles=[], id;
+        var routes = [], roles = [], id;
         // Collect all IDs from first column.
-        $('#tbl-routes tr').each(function() {
+        $('#tbl-routes tr').each(function () {
             id = $(this).find("td:first").html();
             if (id) {
                 routes.push(id);
@@ -13,7 +12,7 @@
         $('#selected_routes').val(routes.join(','));
 
         // Collect all IDs from first column.
-        $('#tbl-roles tr').each(function() {
+        $('#tbl-roles tr').each(function () {
             id = $(this).find("td:first").html();
             if (id) {
                 roles.push(id);

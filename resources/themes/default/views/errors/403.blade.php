@@ -1,6 +1,6 @@
 <?php
-    $page_title = trans('general.error.title-403');
-    $page_description = trans('general.error.description-403');
+$page_title = trans('general.error.title-403');
+$page_description = trans('general.error.description-403');
 ?>
 
 @extends('layouts.master')

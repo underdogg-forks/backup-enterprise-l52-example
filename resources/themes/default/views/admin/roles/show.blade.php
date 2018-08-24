@@ -11,15 +11,19 @@
         <div class='col-md-12'>
             <div class="box-body">
 
-                {!! Form::model($role, ['route' => 'admin.roles.index', 'method' => 'GET']) !!}
+            {!! Form::model($role, ['route' => 'admin.roles.index', 'method' => 'GET']) !!}
 
-                <!-- Custom Tabs -->
+            <!-- Custom Tabs -->
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_details" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
-                        <li class=""><a href="#tab_options" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
-                        <li class=""><a href="#tab_perms" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
-                        <li class=""><a href="#tab_users" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.users') !!}</a></li>
+                        <li class="active"><a href="#tab_details" data-toggle="tab"
+                                              aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
+                        <li class=""><a href="#tab_options" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
+                        <li class=""><a href="#tab_perms" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.perms') !!}</a></li>
+                        <li class=""><a href="#tab_users" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.users') !!}</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_details">
@@ -114,7 +118,9 @@
                 <div class="form-group">
                     {!! Form::submit(trans('general.button.close'), ['class' => 'btn btn-primary']) !!}
                     @if ( $role->isEditable() || $role->canChangePermissions() )
-                        <a href="{!! route('admin.roles.edit', $role->id) !!}" title="{{ trans('general.button.edit') }}" class='btn btn-default'>{{ trans('general.button.edit') }}</a>
+                        <a href="{!! route('admin.roles.edit', $role->id) !!}"
+                           title="{{ trans('general.button.edit') }}"
+                           class='btn btn-default'>{{ trans('general.button.edit') }}</a>
                     @endif
                 </div>
 

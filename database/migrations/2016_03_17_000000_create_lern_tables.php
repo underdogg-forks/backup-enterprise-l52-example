@@ -3,7 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateLernTables extends Migration {
+class CreateLernTables extends Migration
+{
 
     /**
      * Run the migrations.
@@ -12,7 +13,7 @@ class CreateLernTables extends Migration {
      */
     public function up()
     {
-        Schema::create(config('lern.record.table'), function(Blueprint $table) {
+        Schema::create(config('lern.record.table'), function (Blueprint $table) {
             $table->increments('id')->unsigned();
             $table->string('class');
             $table->string('file');

@@ -1,4 +1,3 @@
-
 <script type="text/javascript">
     $('#role_search').select2({
         theme: "bootstrap",
@@ -48,7 +47,7 @@
                 roleDesc = data['description'];
                 roleEnabled = data['enabled'];
 
-                if(1 == roleEnabled) {
+                if (1 == roleEnabled) {
                     roleStatus = '<i class="fa fa-check text-green"></i>';
                 }
                 else {
@@ -56,14 +55,14 @@
                 }
 
                 // Build table cells.
-                idCell     = '<td class="hidden" rowname="id">' + roleID + '</td>';
-                nameCel    = '<td>' + '<a href="' + urlShowRole + '">' + roleName + '</a>' + '</td>';
-                descCel    = '<td>' + '<a href="' + urlShowRole + '">' + roleDesc + '</a>' + '</td>';
+                idCell = '<td class="hidden" rowname="id">' + roleID + '</td>';
+                nameCel = '<td>' + '<a href="' + urlShowRole + '">' + roleName + '</a>' + '</td>';
+                descCel = '<td>' + '<a href="' + urlShowRole + '">' + roleDesc + '</a>' + '</td>';
                 enabledCel = '<td>' + roleStatus + '</td>';
-                actionCel  = '<td style="text-align: right"><a class="btn-remove-role" href="#" title="{{ trans('general.button.remove-role') }}"><i class="fa fa-trash-o deletable"></i></a></td>';
+                actionCel = '<td style="text-align: right"><a class="btn-remove-role" href="#" title="{{ trans('general.button.remove-role') }}"><i class="fa fa-trash-o deletable"></i></a></td>';
 
                 // Add selected item only if not already in list.
-                if ( $('#tbl-roles tr > td[rowname="id"]:contains(' + roleID + ')').length == 0 ) {
+                if ($('#tbl-roles tr > td[rowname="id"]:contains(' + roleID + ')').length == 0) {
                     $('#tbl-roles > tbody:last-child').append('<tr>' + idCell + nameCel + descCel + enabledCel + actionCel + '</tr>');
                 }
 
@@ -71,7 +70,7 @@
         });
     });
 
-    $('body').on('click', 'a.btn-remove-role', function() {
+    $('body').on('click', 'a.btn-remove-role', function () {
         $(this).parent().parent().remove();
     });
 </script>

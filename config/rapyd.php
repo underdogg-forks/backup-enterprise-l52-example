@@ -16,7 +16,7 @@ return [
             'modify' => 'TR',
             'undo' => 'TR',
             'delete' => 'BL',
-            ],
+        ],
     ],
 
     /*
@@ -33,8 +33,8 @@ return [
     | Field's default configuration
     |--------------------------------------------------------------------------
     */
-    'fields'=> [
-        'attributes' => ['class'=>'form-control'],
+    'fields' => [
+        'attributes' => ['class' => 'form-control'],
         'date' => [
             'format' => 'm/d/Y',
         ],
@@ -43,5 +43,5 @@ return [
             'store_as' => 'Y-m-d H:i:s',
         ],
     ],
-    
+
 ];

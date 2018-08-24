@@ -2,10 +2,10 @@
 
 return [
 
-    'password_changed'              => [
+    'password_changed' => [
         'subject' => 'Password change notification.',
     ],
-    'email_validation'              => [
+    'email_validation' => [
         'subject' => 'Email validation.',
     ],
 

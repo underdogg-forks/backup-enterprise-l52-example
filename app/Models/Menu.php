@@ -10,23 +10,18 @@ class Menu extends Model
     /**
      * @var array
      */
-    protected $fillable = ['name', 'label', 'position', 'icon', 'separator', 'url',
-        'enabled', 'parent_id', 'route_id', 'permission_id'];
-
-    public function children()
-    {
-
-        // Root is the parent of itself therefore also a child of itself.
-        // This can create an infinite loop so we must forcibly remove
-        // that entry here.
-        $kids = $this->hasMany('App\Models\Menu', 'parent_id')
-            ->where('name', '!=', 'root')
-            ->orderBy('position', 'ASC')
-            ->orderBy('label', 'ASC')
-            ->orderBy('id', 'ASC');
-
-        return $kids;
-    }
+    protected $fillable = [
+        'name',
+        'label',
+        'position',
+        'icon',
+        'separator',
+        'url',
+        'enabled',
+        'parent_id',
+        'route_id',
+        'permission_id'
+    ];
 
     public function parent()
     {
@@ -53,7 +48,6 @@ class Menu extends Model
         return $this->Label;
     }
 
-
     /**
      * @return bool
      */
@@ -66,13 +60,27 @@ class Menu extends Model
 
         // Fix #32: Prevent deletion of nodes with children
         $children = $this->children();
-        if ( $children && ($children->count() > 0) ) {
+        if ($children && ($children->count() > 0)) {
             return false;
         }
 
         return true;
     }
 
+    public function children()
+    {
+
+        // Root is the parent of itself therefore also a child of itself.
+        // This can create an infinite loop so we must forcibly remove
+        // that entry here.
+        $kids = $this->hasMany('App\Models\Menu', 'parent_id')
+            ->where('name', '!=', 'root')
+            ->orderBy('position', 'ASC')
+            ->orderBy('label', 'ASC')
+            ->orderBy('id', 'ASC');
+
+        return $kids;
+    }
 
     /**
      * @return bool

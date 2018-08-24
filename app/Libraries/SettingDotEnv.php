@@ -40,7 +40,7 @@ class SettingDotEnv extends Dotenv
             }
             // Only use non-empty lines that look like setters
             if (strpos($line, '=') !== false) {
-                $cnt = $cnt  + static::setSettingFromEnv($line);
+                $cnt = $cnt + static::setSettingFromEnv($line);
             }
         }
 
@@ -72,7 +72,7 @@ class SettingDotEnv extends Dotenv
             return $cnt;
         } else {
             Setting::set($key, $value);
-            $cnt  = 1;
+            $cnt = 1;
         }
 
         return $cnt;

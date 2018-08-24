@@ -2,7 +2,8 @@
 
 @section('head_extra')
     <!-- jVectorMap 1.2.2 -->
-    <link href="{{ asset("/bower_components/admin-lte/plugins/jvectormap/jquery-jvectormap-1.2.2.css") }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset("/bower_components/admin-lte/plugins/jvectormap/jquery-jvectormap-1.2.2.css") }}"
+          rel="stylesheet" type="text/css"/>
 @endsection
 
 @section('content')
@@ -55,8 +56,10 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">Project status</h3>
                     <div class="box-tools pull-right">
-                        <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fa fa-minus"></i></button>
-                        <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i class="fa fa-times"></i></button>
+                        <button class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fa fa-minus"></i></button>
+                        <button class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove"><i
+                                    class="fa fa-times"></i></button>
                     </div>
                 </div>
                 <div class="box-body">
@@ -66,14 +69,15 @@
                             <small class="label label-{{$task['color']}} pull-right">{{$task['progress']}}%</small>
                         </h5>
                         <div class="progress progress-xxs">
-                            <div class="progress-bar progress-bar-{{$task['color']}}" style="width: {{$task['progress']}}%"></div>
+                            <div class="progress-bar progress-bar-{{$task['color']}}"
+                                 style="width: {{$task['progress']}}%"></div>
                         </div>
                     @endforeach
 
                 </div><!-- /.box-body -->
                 <div class="box-footer">
                     <form action='#'>
-                        <input type='text' placeholder='New task' class='form-control input-sm' />
+                        <input type='text' placeholder='New task' class='form-control input-sm'/>
                     </form>
                 </div><!-- /.box-footer-->
             </div><!-- /.box -->
@@ -93,42 +97,50 @@
                 <div class="box-body no-padding">
                     <ul class="users-list clearfix">
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user1-128x128.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user1-128x128.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">Alexander Pierce</a>
                             <span class="users-list-date">Today</span>
                         </li>
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user8-128x128.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user8-128x128.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">Norman</a>
                             <span class="users-list-date">Yesterday</span>
                         </li>
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user7-128x128.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user7-128x128.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">Jane</a>
                             <span class="users-list-date">12 Jan</span>
                         </li>
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user6-128x128.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user6-128x128.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">John</a>
                             <span class="users-list-date">12 Jan</span>
                         </li>
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user2-160x160.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user2-160x160.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">Alexander</a>
                             <span class="users-list-date">13 Jan</span>
                         </li>
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user5-128x128.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user5-128x128.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">Sarah</a>
                             <span class="users-list-date">14 Jan</span>
                         </li>
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user4-128x128.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user4-128x128.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">Nora</a>
                             <span class="users-list-date">15 Jan</span>
                         </li>
                         <li>
-                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user3-128x128.jpg") }}" alt="User Image">
+                            <img src="{{ asset ("/bower_components/admin-lte/dist/img/user3-128x128.jpg") }}"
+                                 alt="User Image">
                             <a class="users-list-name" href="#">Nadia</a>
                             <span class="users-list-date">15 Jan</span>
                         </li>
@@ -169,9 +181,12 @@
                 </div><!-- /.box-body -->
                 <div class="box-footer no-padding">
                     <ul class="nav nav-pills nav-stacked">
-                        <li><a href="#">United States of America <span class="pull-right text-red"><i class="fa fa-angle-down"></i> 12%</span></a></li>
-                        <li><a href="#">India <span class="pull-right text-green"><i class="fa fa-angle-up"></i> 4%</span></a></li>
-                        <li><a href="#">China <span class="pull-right text-yellow"><i class="fa fa-angle-left"></i> 0%</span></a></li>
+                        <li><a href="#">United States of America <span class="pull-right text-red"><i
+                                            class="fa fa-angle-down"></i> 12%</span></a></li>
+                        <li><a href="#">India <span class="pull-right text-green"><i
+                                            class="fa fa-angle-up"></i> 4%</span></a></li>
+                        <li><a href="#">China <span class="pull-right text-yellow"><i
+                                            class="fa fa-angle-left"></i> 0%</span></a></li>
                     </ul>
                 </div><!-- /.footer -->
             </div>
@@ -183,7 +198,8 @@
 
 @section('body_bottom')
     <!-- ChartJS -->
-    <script src="{{ asset ("/bower_components/admin-lte/plugins/chartjs/chart.min.js") }}" type="text/javascript"></script>
+    <script src="{{ asset ("/bower_components/admin-lte/plugins/chartjs/chart.min.js") }}"
+            type="text/javascript"></script>
 
     <script type="text/javascript">
         //-------------

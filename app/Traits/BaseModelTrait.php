@@ -17,14 +17,10 @@ trait BaseModelTrait
 
         if ($id instanceof self) {
             $modelObj = $id;
-        }
-        elseif (is_numeric($id))
-        {
+        } elseif (is_numeric($id)) {
             $modelObj = self::find($id);
-        }
-        else
-        {
-            $modelObj = self::where($column , '=', $id)->first();
+        } else {
+            $modelObj = self::where($column, '=', $id)->first();
         }
 
         return $modelObj;

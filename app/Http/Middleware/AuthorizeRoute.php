@@ -3,11 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\Handler;
+use App\Models\Route as AppRoute;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
-use Route as LaravelRoute;
-use App\Models\Route as AppRoute;
 use Log;
+use Route as LaravelRoute;
 
 class AuthorizeRoute
 {
@@ -21,7 +21,7 @@ class AuthorizeRoute
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
+     * @param  Guard $auth
      * @return void
      */
     public function __construct(Guard $auth)
@@ -32,37 +32,37 @@ class AuthorizeRoute
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        $authorized     = false;    // Default to protect all routes.
-        $errorCode      = 0;        // Default to something bogus...
-        $method         = null;
-        $path           = null;
-        $actionName     = null;
-        $user           = null;
-        $username       = null;
-        $guest          = false;
+        $authorized = false;    // Default to protect all routes.
+        $errorCode = 0;        // Default to something bogus...
+        $method = null;
+        $path = null;
+        $actionName = null;
+        $user = null;
+        $username = null;
+        $guest = false;
 
         // Get current route from Laravel.
-        $laravelRoute   = LaravelRoute::current();
+        $laravelRoute = LaravelRoute::current();
 
         // If not set we will fallback to error HTTP 500. This should never occur. TODO: remove this check...
-        if ( isset($laravelRoute) ) {
+        if (isset($laravelRoute)) {
             // Get route info.
-            $method     = $laravelRoute->getMethods()[0];
-            $path       = $laravelRoute->getPath();
+            $method = $laravelRoute->getMethods()[0];
+            $path = $laravelRoute->getPath();
             $actionName = $laravelRoute->getActionName();
 
             // Get current user or set guest to true for unauthenticated users.
-            if ( $this->auth->check() ) {
-                $user       = $this->auth->user();
-                $username   = $user->username;
-            } elseif ( $this->auth->guest() ) {
-                $guest      = true;
+            if ($this->auth->check()) {
+                $user = $this->auth->user();
+                $username = $user->username;
+            } elseif ($this->auth->guest()) {
+                $guest = true;
             }
 
             // AuthController and PasswordController are exempt from authorization.
@@ -81,8 +81,7 @@ class AuthorizeRoute
             // TODO: Get 'admins' role name from config, and replace all occurrences.
             elseif (!$guest && isset($user) && $user->hasRole('admins')) {
                 $authorized = true;
-            }
-            else {
+            } else {
 //                if ($user->enabled)
 //                {
                 // Get application route based on info from Laravel route.
@@ -93,42 +92,38 @@ class AuthorizeRoute
                     ->with('permission')
                     ->first();
                 // If found, proceed with authorization
-                if ( isset($appRoute) ) {
+                if (isset($appRoute)) {
 
                     // Permission set for route.
-                    if ( isset($appRoute->permission) ) {
+                    if (isset($appRoute->permission)) {
                         // Route is open to all.
                         // TODO: Get 'open-to-all' role name from config, and replace all occurrences.
-                        if ( 'open-to-all' == $appRoute->permission->name ) {
+                        if ('open-to-all' == $appRoute->permission->name) {
                             $authorized = true;
                         }
                         // TODO: Get 'guest-only' role name from config, and replace all occurrences.
                         // User is guest/unauthenticated and the route is restricted to guests.
-                        elseif ( $guest && 'guest-only' == $appRoute->permission->name ) {
+                        elseif ($guest && 'guest-only' == $appRoute->permission->name) {
                             $authorized = true;
                         }
                         // TODO: Get 'basic-authenticated' role name from config, and replace all occurrences.
                         // The route is available to any authenticated user.
-                        elseif ( !$guest && isset($user) && ($user->enabled) && 'basic-authenticated' == $appRoute->permission->name ) {
+                        elseif (!$guest && isset($user) && ($user->enabled) && 'basic-authenticated' == $appRoute->permission->name) {
                             $authorized = true;
-                        }
-                        // The user has the permission required by the route.
-                        elseif ( !$guest && isset($user) && ($user->enabled) && $user->can($appRoute->permission->name) ) {
+                        } // The user has the permission required by the route.
+                        elseif (!$guest && isset($user) && ($user->enabled) && $user->can($appRoute->permission->name)) {
                             $authorized = true;
-                        }
-                        // If all checks fail, abort with an HTTP 403 error.
+                        } // If all checks fail, abort with an HTTP 403 error.
                         else {
                             Log::error("Authorization denied for request path [" . $request->path() . "], method [" . $method . "] and action name [" . $actionName . "], guest [" . $guest . "], username [" . $username . "].");
                             $errorCode = 403;
                         }
-                    }
-                    // If all checks fail, abort with an HTTP 403 error.
+                    } // If all checks fail, abort with an HTTP 403 error.
                     else {
                         Log::error("No permission set for the requested route, path [" . $request->path() . "], method [" . $method . "] and action name [" . $actionName . "], guest [" . $guest . "], username [" . $username . "].");
                         $errorCode = 403;
                     }
-                }
-                // If application route is not found
+                } // If application route is not found
                 else {
                     Log::error("No application route found in AuthorizeRoute module for request path [" . $request->path() . "], method [" . $method . "] and action name [" . $actionName . "].");
                     $errorCode = 403;
@@ -144,21 +139,20 @@ class AuthorizeRoute
         // If authorize, proceed
         if ($authorized) {
             return $next($request);
-        // Else if error code was set abort with that.
-        } elseif ( 0 != $errorCode ) {
-            if ( !$guest && isset($user) && (!$user->enabled) ) {
+            // Else if error code was set abort with that.
+        } elseif (0 != $errorCode) {
+            if (!$guest && isset($user) && (!$user->enabled)) {
                 $msg = "User [" . $user->username . "] disabled, forcing logout.";
                 Log::error($msg); // To LOG
                 (new Handler(Log::getMonolog()))->report(new \Exception($msg)); //To LERN
-                return redirect( route('logout') );
-            }
-            else {
+                return redirect(route('logout'));
+            } else {
                 $msg = "Aborting request with error code: " . $errorCode;
                 Log::error($msg); // To LOG
                 (new Handler(Log::getMonolog()))->report(new \Exception($msg)); // To LERN
                 abort($errorCode);
             }
-        // Lastly Fallback to error HTTP 500: Internal server error. We should not get to this!
+            // Lastly Fallback to error HTTP 500: Internal server error. We should not get to this!
         } else {
             $msg = "Server error while trying to authorize route, request path [" . $request->path() . "], method [" . $method . "] and action name [" . $actionName . "].";
             Log::error($msg); // To LOG

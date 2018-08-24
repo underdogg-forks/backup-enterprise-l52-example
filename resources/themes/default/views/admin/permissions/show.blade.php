@@ -10,15 +10,19 @@
         <div class='col-md-12'>
             <div class="box-body">
 
-                {!! Form::model($perm, ['route' => 'admin.permissions.index', 'method' => 'GET']) !!}
+            {!! Form::model($perm, ['route' => 'admin.permissions.index', 'method' => 'GET']) !!}
 
-                <!-- Custom Tabs -->
+            <!-- Custom Tabs -->
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_details" data-toggle="tab" aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
-                        <li class=""><a href="#tab_options" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
-                        <li class=""><a href="#tab_routes" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.routes') !!}</a></li>
-                        <li class=""><a href="#tab_roles" data-toggle="tab" aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
+                        <li class="active"><a href="#tab_details" data-toggle="tab"
+                                              aria-expanded="true">{!! trans('general.tabs.details') !!}</a></li>
+                        <li class=""><a href="#tab_options" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.options') !!}</a></li>
+                        <li class=""><a href="#tab_routes" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.routes') !!}</a></li>
+                        <li class=""><a href="#tab_roles" data-toggle="tab"
+                                        aria-expanded="false">{!! trans('general.tabs.roles') !!}</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_details">
@@ -135,7 +139,9 @@
 
                 <div class="form-group">
                     {!! Form::submit(trans('general.button.close'), ['class' => 'btn btn-primary']) !!}
-                    <a href="{!! route('admin.permissions.edit', $perm->id) !!}" title="{{ trans('general.button.edit') }}" class='btn btn-default'>{{ trans('general.button.edit') }}</a>
+                    <a href="{!! route('admin.permissions.edit', $perm->id) !!}"
+                       title="{{ trans('general.button.edit') }}"
+                       class='btn btn-default'>{{ trans('general.button.edit') }}</a>
                 </div>
 
                 {!! Form::close() !!}

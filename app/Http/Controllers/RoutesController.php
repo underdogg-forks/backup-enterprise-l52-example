@@ -1,6 +1,5 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
 use App\Repositories\AuditRepository as Audit;
 use App\Repositories\Criteria\Route\RoutesByMethodAscending;
 use App\Repositories\Criteria\Route\RoutesByPathAscending;
@@ -48,15 +47,16 @@ class RoutesController extends Controller
     {
 //        //TODO: Warn of any routes in our DB that is not used in the app.
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-index'));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-index'));
 
         $page_title = trans('admin/routes/general.page.index.title');
         $page_description = trans('admin/routes/general.page.index.description');
 
         $routes = $this->route->pushCriteria(new RoutesWithPermissions())
-                              ->pushCriteria(new RoutesByPathAscending())
-                              ->pushCriteria(new RoutesByMethodAscending())
-                              ->paginate(20);
+            ->pushCriteria(new RoutesByPathAscending())
+            ->pushCriteria(new RoutesByMethodAscending())
+            ->paginate(20);
         $perms = $this->permission->all()->lists('display_name', 'id');
         // SR [2016-03-20] Cannot add/prepend a blank item as it reshuffles the array index.
         // This cause the permission to not be recognized by the code building the view and
@@ -78,7 +78,8 @@ class RoutesController extends Controller
 
         $route = $this->route->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-show', ['name' => $route->name]));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-show', ['name' => $route->name]));
 
         return view('admin.routes.show', compact('route', 'page_title', 'page_description'));
     }
@@ -100,19 +101,21 @@ class RoutesController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, array(    'name'          => 'required|unique:routes',
-                                            'action_name'   => 'required',
-                                            'method'        => 'required',
-                                            'path'          => 'required'
+        $this->validate($request, array(
+            'name' => 'required|unique:routes',
+            'action_name' => 'required',
+            'method' => 'required',
+            'path' => 'required'
         ));
 
         $attributes = $request->all();
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-store', ['name' => $attributes['name']]));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-store', ['name' => $attributes['name']]));
 
         $this->route->create($attributes);
 
-        Flash::success( trans('admin/routes/general.status.created') );
+        Flash::success(trans('admin/routes/general.status.created'));
 
         return redirect('/admin/routes');
     }
@@ -128,7 +131,8 @@ class RoutesController extends Controller
 
         $route = $this->route->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-edit', ['name' => $route->name]));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-edit', ['name' => $route->name]));
 
         return view('admin.routes.edit', compact('route', 'page_title', 'page_description'));
     }
@@ -140,19 +144,21 @@ class RoutesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, array(    'name'          => 'required|unique:routes,name,' . $id,
-                                            'action_name'   => 'required',
-                                            'method'        => 'required',
-                                            'path'          => 'required'
+        $this->validate($request, array(
+            'name' => 'required|unique:routes,name,' . $id,
+            'action_name' => 'required',
+            'method' => 'required',
+            'path' => 'required'
         ));
 
         $route = $this->route->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-update', ['name' => $route->name]));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-update', ['name' => $route->name]));
 
         $route->update($request->all());
 
-        Flash::success( trans('admin/routes/general.status.updated') );
+        Flash::success(trans('admin/routes/general.status.updated'));
 
         return redirect('/admin/routes');
     }
@@ -165,11 +171,12 @@ class RoutesController extends Controller
     {
         $route = $this->route->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-destroy', ['name' => $route->name]));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-destroy', ['name' => $route->name]));
 
         $this->route->delete($id);
 
-        Flash::success( trans('admin/routes/general.status.deleted') );
+        Flash::success(trans('admin/routes/general.status.deleted'));
 
         return redirect('/admin/routes');
     }
@@ -177,7 +184,7 @@ class RoutesController extends Controller
     /**
      * Delete Confirm
      *
-     * @param   int   $id
+     * @param   int $id
      * @return  View
      */
     public function getModalDelete($id)
@@ -204,7 +211,8 @@ class RoutesController extends Controller
     {
         $route = $this->route->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-enable', ['name' => $route->name]));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-enable', ['name' => $route->name]));
 
         $route->enabled = true;
         $route->save();
@@ -222,7 +230,8 @@ class RoutesController extends Controller
     {
         $route = $this->route->find($id);
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-disabled', ['name' => $route->name]));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-disabled', ['name' => $route->name]));
 
         $route->enabled = false;
         $route->save();
@@ -237,12 +246,14 @@ class RoutesController extends Controller
      */
     public function load()
     {
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-load'));
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-load'));
 
         $nbRoutesLoaded = \App\Models\Route::loadLaravelRoutes('/.*/');
         $nbRoutesDeleted = \App\Models\Route::deleteLaravelRoutes();
 
-        Flash::success( trans('admin/routes/general.status.synced', ['nbLoaded' => $nbRoutesLoaded, 'nbDeleted' => $nbRoutesDeleted]) );
+        Flash::success(trans('admin/routes/general.status.synced',
+            ['nbLoaded' => $nbRoutesLoaded, 'nbDeleted' => $nbRoutesDeleted]));
         return redirect('/admin/routes');
     }
 
@@ -253,34 +264,28 @@ class RoutesController extends Controller
     {
         $AuditAtt = $request->all();
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-save-perms'), $AuditAtt);
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-save-perms'), $AuditAtt);
 
         $chkRoute = $request->input('chkRoute');
         $globalPerm_id = $request->input('globalPerm');
         $perms = $request->input('perms');
 
-        if (isset($chkRoute) && isset($globalPerm_id))
-        {
-            foreach ($chkRoute as $route_id)
-            {
+        if (isset($chkRoute) && isset($globalPerm_id)) {
+            foreach ($chkRoute as $route_id) {
                 $route = $this->route->find($route_id);
                 $route->permission_id = $globalPerm_id;
                 $route->save();
             }
             Flash::success(trans('admin/routes/general.status.global-perms-assigned'));
-        }
-        elseif (isset($perms))
-        {
-            foreach ($perms as $route_id => $perm_id)
-            {
+        } elseif (isset($perms)) {
+            foreach ($perms as $route_id => $perm_id) {
                 $route = $this->route->find($route_id);
                 $route->permission_id = $perm_id;
                 $route->save();
             }
             Flash::success(trans('admin/routes/general.status.indiv-perms-assigned'));
-        }
-        else
-        {
+        } else {
             Flash::warning(trans('admin/routes/general.status.no-permission-changed-detected'));
         }
         return redirect('/admin/routes');
@@ -293,20 +298,17 @@ class RoutesController extends Controller
     {
         $chkRoute = $request->input('chkRoute');
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-enabled-selected'), $chkRoute);
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-enabled-selected'), $chkRoute);
 
-        if (isset($chkRoute))
-        {
-            foreach ($chkRoute as $route_id)
-            {
+        if (isset($chkRoute)) {
+            foreach ($chkRoute as $route_id) {
                 $route = $this->route->find($route_id);
                 $route->enabled = true;
                 $route->save();
             }
             Flash::success(trans('admin/routes/general.status.global-enabled'));
-        }
-        else
-        {
+        } else {
             Flash::warning(trans('admin/routes/general.status.no-route-selected'));
         }
         return redirect('/admin/routes');
@@ -319,20 +321,17 @@ class RoutesController extends Controller
     {
         $chkRoute = $request->input('chkRoute');
 
-        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'), trans('admin/routes/general.audit-log.msg-disabled-selected'), $chkRoute);
+        Audit::log(Auth::user()->id, trans('admin/routes/general.audit-log.category'),
+            trans('admin/routes/general.audit-log.msg-disabled-selected'), $chkRoute);
 
-        if (isset($chkRoute))
-        {
-            foreach ($chkRoute as $route_id)
-            {
+        if (isset($chkRoute)) {
+            foreach ($chkRoute as $route_id) {
                 $route = $this->route->find($route_id);
                 $route->enabled = false;
                 $route->save();
             }
             Flash::success(trans('admin/routes/general.status.global-disabled'));
-        }
-        else
-        {
+        } else {
             Flash::warning(trans('admin/routes/general.status.no-route-selected'));
         }
         return redirect('/admin/routes');
@@ -357,7 +356,7 @@ class RoutesController extends Controller
             $name = $route->name;
             $action_name = $route->action_name;
 
-            $entry_arr = [ 'id' => $id, 'text' => "$method $path ($name) [$action_name]"];
+            $entry_arr = ['id' => $id, 'text' => "$method $path ($name) [$action_name]"];
             $return_arr[] = $entry_arr;
         }
 

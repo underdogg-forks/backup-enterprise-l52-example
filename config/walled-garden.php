@@ -25,10 +25,17 @@ return array(
     |
     */
     'exemptions-path' => [
-        '/',                'home',                            'faust',
-        'auth/login',       'auth/register',                   'auth/verify',
-        'password/email',   'password/reset',
-        '_debugbar/open',   '_debugbar/assets/stylesheets',    '_debugbar/assets/javascript',
+        '/',
+        'home',
+        'faust',
+        'auth/login',
+        'auth/register',
+        'auth/verify',
+        'password/email',
+        'password/reset',
+        '_debugbar/open',
+        '_debugbar/assets/stylesheets',
+        '_debugbar/assets/javascript',
     ],
 
 

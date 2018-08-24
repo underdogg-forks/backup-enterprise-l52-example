@@ -38,8 +38,8 @@ class Arr extends BaseArr
     {
         $values = is_array($values) ? $values : [$values];
 
-        foreach($values as $val) {
-            if(($key = array_search($val, $array)) !== false) {
+        foreach ($values as $val) {
+            if (($key = array_search($val, $array)) !== false) {
                 unset($array[$key]);
             }
         }
